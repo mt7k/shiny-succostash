@@ -1,5 +1,5 @@
 -- # Server Autorun
-set_require_domain("https://raw.githubusercontent.com/mt7k/shiny-succotash/refs/heads/pre-main/")
+set_require_domain("https://raw.githubusercontent.com/mt7k/shiny-succotash/refs/heads/main/")
 local server_module = {}
 
 -- Type Aliases
@@ -89,9 +89,6 @@ end
 
 local function getRandomSetupCode(slot_code: string, player: luauInstance | string): (string, string)
     slot_code = slot_code:lower()
-    -- if slot_code == "primary" then
-        -- return "066q-0252-5z7o-2aoq-5nfn-9208-w1n9-ge54", "AK_762" -- pkm
-    -- end
 
     local setup_code = nil
     local weapon_code = nil
@@ -177,8 +174,8 @@ function server_module.sendSpookyFace()
     -- does not work due to chat filtering
     --[[
     split = FACES["Two"]:split("\n")
-    for i, v in split do
-        chat.send_announcement(v, Color3.fromRGB(255, 0, 0))
+    for i, line in split do
+        chat.send_announcement(line, Color3.fromRGB(255, 0, 0))
     end
     ]]
 end
@@ -202,7 +199,6 @@ local function createEntities()
     for _, player in players.get_all() do
         if player.is_bot() then
             player.set_team('attacker')
-            player.set_model("orchids_pbr_set")
         end
     end
 end
