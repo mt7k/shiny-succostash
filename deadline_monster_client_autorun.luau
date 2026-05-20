@@ -9,8 +9,9 @@ local SWITCH_SOUNDS = false :: boolean
 local ONLY_SWAP_VALID_SOUNDS = false :: boolean
 
 -- Variables
-local amd_connection: RBXScriptConnection
 local anti_monster_device: Part
+local renderstep_connection: RBXScriptConnection
+local amd_connection: RBXScriptConnection
 
 -- Methods
 -- \\ navigation_module Methods
@@ -102,25 +103,17 @@ function client_module:createNewShield(): Part
     ams.CanQuery = true -- This needs to be enabled
     ams.CanTouch = false
     ams.CollisionGroup = "wall"
+
+    -- Flat Shield
+    ams.Shape = Enum.PartType.Block
     ams.Size = Vector3.new(75, 75, 0.125)
-    ams.Parent = get_map_root() -- navigation_module:getIgnoreFolderUsingTaggedChildren()
 
     --[[ Spherical Shield 
-        local ams: Part = create_instance("Part")
-        ams.Name = "anti-monster device"
-        ams.Transparency = 0
-        ams.Material = Enum.Material.ForceField
-        ams.Color = Color3.fromRGB(255, 255, 255)
-        ams.CastShadow = false
-        ams.Anchored = true
-        ams.CanCollide = false
-        ams.CanQuery = true -- This needs to be enabled
-        ams.CanTouch = false
-        ams.CollisionGroup = "wall"
         ams.Shape = Enum.PartType.Ball
         ams.Size = Vector3.new(15, 15, 15)
-        ams.Parent = get_map_root() -- navigation_module:getIgnoreFolderUsingTaggedChildren()
     ]]
+
+    ams.Parent = get_map_root() -- navigation_module:getIgnoreFolderUsingTaggedChildren()
     
     return ams
 end
@@ -171,6 +164,15 @@ function client_module.on_died()
     end
 end
 
+local function renderstepFunction(delta_time)
+    -- UI stuff
+    if framework.character.is_alive() then
+        gui_module.draw()
+    -- else
+        -- ui for when the character is despawned
+    end
+end
+
 -- Runtime
 -- \\ Replace/Swap Gun Sounds
 client_module:replace_gun_sounds("QBZ", "AK308", false)
@@ -178,7 +180,8 @@ client_module:replace_gun_sounds("P320", "UMP9", false)
 client_module:replace_gun_sounds("HK416", "M4A1", false)
 client_module:replace_gun_sounds("AK_762", "FAL", false)
 
--- \\ Create Events
+-- \\ Connect Events
+renderstep_connection = time.renderstep("Monster Client Renderstep", renderstepFunction)
 framework.on_spawned:Connect(client_module.on_spawned)
 framework.on_died:Connect(client_module.on_died)
 
