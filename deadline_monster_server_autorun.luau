@@ -14,6 +14,10 @@ local PLAYER_SETUP_CODES = require("deadline_monster_setup_codes.luau")
 local SERVER_SOUNDS = require("deadline_monster_sounds.luau")
 local CHAT_COMMAND_PREFIX = ":"
 
+for i, v in SERVER_SOUNDS do
+    print(i,v)
+end
+
 -- Variables
 local player_setup_ignore_list = {} --:: {[string]: {["primary" | "secondary"]: {string}}}
 
@@ -249,22 +253,21 @@ local function onPlayerDied(name, death_position, killer_data, stats_counted)
     local player = players.get(name)
     if player then
         print(death_position, killer_data, stats_counted)
-        for i, v in killer_data do
-            print(i, v)
+        
+        if killer_data["type"] == "monster" then
+            local death_sound_id = SERVER_SOUNDS:selectRandomIDFromCategory("death_monster")
+
+            local death_sound_properties = {
+                id = death_sound_id,
+                volume = 0.75,
+                speed = 1,
+                max_distance = 20,
+                min_distance = 10,
+                position = death_position,
+            }
+
+            SERVER_SOUNDS:insertPhysicalSoundToWorkspace(death_sound_properties)
         end
-
-        local death_sound_id = SERVER_SOUNDS:selectRandomIDFromCategory("death_monster")
-
-        local death_sound_properties = {
-            id = death_sound_id,
-            volume = 0.75,
-            speed = 1,
-            max_distance = 20,
-            min_distance = 10,
-            position = death_position,
-        }
-
-        SERVER_SOUNDS:insertSoundToWorkspace(death_sound_properties)
     else
         warn("player could not be referenced:", name)
     end
