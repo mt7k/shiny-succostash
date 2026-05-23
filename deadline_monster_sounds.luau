@@ -14,11 +14,21 @@ type physicalSoundProperties = {
 
 -- Constants
 local IDs = {
+    painful_scream = {
+        
+    },
     death_monster = {
+        --[[ V1
         9113543849,
         9113547393,
         9113541344,
-        9113545651
+        9113545651,]]
+        -- V2
+        9114542183,
+        9113540587,
+        9113540935,
+        9119558965,
+        9113542948,
     }
 }
 
