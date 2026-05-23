@@ -131,10 +131,9 @@ local SETUPS = {
             WeaponCode = "MP5",
             SetupCode = "63a3-0252-1n00-wefo-c13o-oahh-2z8a-1dne"
         },
-        
         {
             Name = "PP-19-01",
-            WeaponCode = "AK-9",
+            WeaponCode = "AK_9",
             SetupCode = "g0qa-0252-7dzn-0mgg-f66d-eo51-w6mo-hgw9"
         },
         -- Nogunlimits

@@ -18,7 +18,7 @@ type luauInstance = {}
 -- Modules
 local PLAYER_SETUP_CODES = require("deadline_monster_setup_codes.luau")
 local SERVER_SOUNDS = require("deadline_monster_sounds.luau")
-local SERVER_SOUNDS = require("deadline_monster_utility.luau")
+local UTILITY = require("deadline_monster_utility.luau")
 
 -- Constants
 local MAP_CONFIG = {gamemode = "NONE", is_day = false, lights_out = true, map = "test_nuristan", time = 0}
@@ -215,8 +215,6 @@ local function createEntities()
             player.set_team('attacker')
         end
     end
-
-    warn("finished creating entities")
 end
 
 -- \\ Gameplay Module
@@ -245,7 +243,6 @@ function gameplay_module.startGameLoop()
         gameplay_module.isGameActive = true
         gameLoop()
     end
-    warn("started game loop")
 end
 
 function gameplay_module.attemptToEndGameLoop()
@@ -254,7 +251,6 @@ end
 
 -- Event functions
 local function onPlayerSpawned(name: string)
-    print("player spawned:", name)
     local player = players.get(name)
     if player then
         -- local team = player.get_team()
@@ -297,7 +293,6 @@ local function onPlayerDied(name, death_position, killer_data, stats_counted)
 end
 
 local function onPlayerJoined(name)
-    print("player joined:", name)
     local player = players.get(name)
     if player then
         server_module:setPlayerModelToTeamModel(player)
@@ -348,12 +343,8 @@ map.set_map_from_config(MAP_CONFIG)
 map.set_preset(MAP_PRESET)
 map.kill_map_lights()
 
-warn("got through sharedvar changes")
-
 -- Preload server audios
 SERVER_SOUNDS:preloadAllAudio()
-
-warn("preloaded audio")
 
 -- Cooldown before game starts
 task.wait(10)
@@ -374,8 +365,6 @@ on_player_died:Connect(onPlayerDied)
 on_player_joined:Connect(onPlayerJoined)
 on_player_left:Connect(onPlayerLeft)
 chat.player_chatted:Connect(playerChatted)
-
-warn("set up events")
 
 shared["server_module"] = server_module
 
