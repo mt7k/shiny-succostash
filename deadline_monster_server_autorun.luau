@@ -8,10 +8,7 @@ local domain = "https://raw.githubusercontent.com/mt7k/shiny-succostash/refs/hea
 set_require_domain(domain)
 
 local server_module = {}
-local gameplay_module = {
-    isGameActive = false,
-    monsterShieldsEnabled = true,
-}
+local gameplay_module = {}
 
 -- Type Aliases
 type luauInstance = {}
@@ -30,6 +27,8 @@ local ENEMY_BOT_COUNT = 20
 
 -- Variables
 local player_setup_ignore_list = {} --:: {[string]: {["primary" | "secondary"]: {string}}}
+shared.monsterShieldsEnabled = true
+shared.isGameActive = false
 
 -- Functions
 -- \\ Server Module
@@ -234,20 +233,20 @@ function gameplay_module:reloadAllBotWeapons()
 end
 
 local function gameLoop()
-    while gameplay_module.isGameActive do
+    while shared.isGameActive do
         task.wait(15) -- code needed here
     end
 end
 
 function gameplay_module.startGameLoop()
-    if not gameplay_module.isGameActive then
-        gameplay_module.isGameActive = true
+    if not shared.isGameActive then
+        shared.isGameActive = true
         gameLoop()
     end
 end
 
 function gameplay_module.attemptToEndGameLoop()
-    gameplay_module.isGameActive = false
+    shared.isGameActive = false
 end
 
 -- Event functions
