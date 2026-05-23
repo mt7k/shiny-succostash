@@ -1,5 +1,12 @@
 -- # Server Autorun
-set_require_domain("https://raw.githubusercontent.com/mt7k/shiny-succostash/refs/heads/main/")
+local branch = "main"
+if shared.isLoadingPreMainBranch == true then
+    branch = "pre-main"
+end
+
+local domain = "https://raw.githubusercontent.com/mt7k/shiny-succostash/refs/heads/".. branch.. "/"
+set_require_domain(domain)
+
 local server_module = {}
 
 -- Type Aliases
