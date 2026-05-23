@@ -266,7 +266,7 @@ local function onPlayerDied(name, death_position, killer_data, stats_counted)
 
             local death_sound_properties = {
                 id = death_sound_id,
-                volume = 0.75,
+                volume = 2.5,
                 speed = 1,
                 max_distance = 20,
                 min_distance = 10,

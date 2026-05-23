@@ -80,7 +80,10 @@ function server_sound_module:insertPhysicalSoundToWorkspace(properties: physical
     end
 
     if not sound_instance.IsLoaded then
-        sound_instance.Loaded:Wait()
+        local threshold = 30
+        repeat
+            task.wait()
+        until threshold <= 0 or sound_instance.IsLoaded
     end
 
     local sound_length = (sound_instance.TimeLength * 2) / properties.speed
