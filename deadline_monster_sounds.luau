@@ -1,17 +1,7 @@
 --# Sound IDs Module
 local server_sound_module = {}
 
-local IDs = {
-    death_monster = {
-        9113543849,
-        9113547393,
-        9113541344,
-        9113545651
-    }
-}
-
-local current_sounds = {}:: {[string]: Part}
-
+-- Type Aliases
 type physicalSoundProperties = {
     id: number,
     volume: number,
@@ -22,6 +12,20 @@ type physicalSoundProperties = {
     weldTo: BasePart | nil,
 }
 
+-- Constants
+local IDs = {
+    death_monster = {
+        9113543849,
+        9113547393,
+        9113541344,
+        9113545651
+    }
+}
+
+-- Variables
+local current_sounds = {}:: {[string]: Part}
+
+-- Functions
 local function debrisAddItem(inst: Instance, delay: number)
     if not delay then
         delay = 5
@@ -30,6 +34,23 @@ local function debrisAddItem(inst: Instance, delay: number)
     task.delay(delay, function()
         inst.destroy()
     end)
+end
+
+function server_sound_module:preloadAllAudio()
+    for _, selected_category in IDs do
+        for _, selected_id in selected_category do
+            local properties = {
+                id = selected_id,
+                volume = 0,
+                speed = 100,
+                max_distance = 20,
+                min_distance = 0,
+                position = Vector3.new(),
+            }
+
+            self:insertPhysicalSoundToWorkspace(properties)
+        end
+    end
 end
 
 function server_sound_module:selectRandomIDFromCategory(category: string)
@@ -89,6 +110,7 @@ function server_sound_module:insertPhysicalSoundToWorkspace(properties: physical
     debrisAddItem(part, sound_length)
 
     part.Parent = get_map_root()
+    current_sounds[sound_instance.Name] = sound_instance
 end
 
 return server_sound_module

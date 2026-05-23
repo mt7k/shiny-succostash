@@ -8,23 +8,30 @@ local domain = "https://raw.githubusercontent.com/mt7k/shiny-succostash/refs/hea
 set_require_domain(domain)
 
 local server_module = {}
+local gameplay_module = {
+    isGameActive = false
+}
 
 -- Type Aliases
 type luauInstance = {}
+
+-- Modules
+local PLAYER_SETUP_CODES = require("deadline_monster_setup_codes.luau")
+local SERVER_SOUNDS = require("deadline_monster_sounds.luau")
+local SERVER_SOUNDS = require("deadline_monster_utility.luau")
 
 -- Constants
 local MAP_CONFIG = {gamemode = "NONE", is_day = false, lights_out = true, map = "test_nuristan", time = 0}
 local MAP_PRESET = "darkworld"
 local MONSTER_COUNT = 20
 local ENEMY_BOT_COUNT = 0
-local PLAYER_SETUP_CODES = require("deadline_monster_setup_codes.luau")
-local SERVER_SOUNDS = require("deadline_monster_sounds.luau")
-local CHAT_COMMAND_PREFIX = ":"
+-- local CHAT_COMMAND_PREFIX = ":"
 
 -- Variables
 local player_setup_ignore_list = {} --:: {[string]: {["primary" | "secondary"]: {string}}}
 
 -- Functions
+-- \\ Server Module
 function server_module:getPlayerSetupIgnoreList(playerName: string)
     -- IF NOT found, create it
     local t = nil
@@ -210,24 +217,31 @@ local function createEntities()
     end
 end
 
-local function gameLoop()
-    --[[while true do
-        for _, player in players.get_all() do
-            if player.is_bot() then
-                local active_slot = player.get_active_slot()
-                if active_slot then
-                    local player_weapon = player.get_weapon_data_from_character(active_slot)
-                    if xyz then
-
-                    end
+-- \\ Gameplay Module
+function gameplay_module:reloadAllBotWeapons()
+    for _, player in players.get_all() do
+        if player.is_bot() then
+            local active_slot = player.get_active_slot()
+            if active_slot then
+                local player_weapon = player.get_weapon_data_from_character(active_slot)
+                if player_weapon.xyz then
 
                 end
-
             end
         end
+    end
+end
 
+local function gameLoopStep()
+    while true do
         task.wait(15)
-    end]]
+    end
+end
+
+function gameplay_module:startGameLoop()
+    while gameplay_module.isGameActive do
+        gameLoopStep()
+    end
 end
 
 -- Event functions
@@ -325,6 +339,9 @@ sharedvars.voxel_bullet_destruction_radius = 1
 map.set_map_from_config(MAP_CONFIG)
 map.set_preset(MAP_PRESET)
 map.kill_map_lights()
+
+-- Preload server audios
+SERVER_SOUNDS:preloadAllAudio()
 
 -- Cooldown before game starts
 task.wait(10)
