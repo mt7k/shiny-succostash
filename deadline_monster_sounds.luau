@@ -75,10 +75,6 @@ function server_sound_module:insertPhysicalSoundToWorkspace(properties: physical
     sound_instance.RollOffMode = Enum.RollOffMode.Linear
     -- sound_instance.AcousticSimulationEnabled = true -- soon
 
-    for i, v in sound_instance do
-        print("sound:", i, v)
-    end
-
     if not sound_instance.IsLoaded then
         local threshold = 60
         repeat
