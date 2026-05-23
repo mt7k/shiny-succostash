@@ -273,7 +273,7 @@ end
 local function onPlayerDied(name, death_position, killer_data, stats_counted)
     local player = players.get(name)
     if player then
-        if true then -- killer_data["type"] == "monster" then
+        if killer_data["type"] == "monster" then
             local death_sound_id = SERVER_SOUNDS:selectRandomIDFromCategory("death_monster")
 
             local death_sound_properties = {
