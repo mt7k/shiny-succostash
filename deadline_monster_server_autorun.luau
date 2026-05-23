@@ -215,6 +215,8 @@ local function createEntities()
             player.set_team('attacker')
         end
     end
+
+    warn("finished creating entities")
 end
 
 -- \\ Gameplay Module
@@ -232,17 +234,18 @@ function gameplay_module:reloadAllBotWeapons()
     end
 end
 
-local function gameLoopStep()
-    task.wait(15)
+local function gameLoop()
+    while gameplay_module.isGameActive do
+        task.wait(15) -- code needed here
+    end
 end
 
 function gameplay_module.startGameLoop()
     if not gameplay_module.isGameActive then
         gameplay_module.isGameActive = true
-        while gameplay_module.isGameActive do
-            gameLoopStep()
-        end
+        gameLoop()
     end
+    warn("started game loop")
 end
 
 function gameplay_module.attemptToEndGameLoop()
@@ -345,8 +348,12 @@ map.set_map_from_config(MAP_CONFIG)
 map.set_preset(MAP_PRESET)
 map.kill_map_lights()
 
+warn("got through sharedvar changes")
+
 -- Preload server audios
 SERVER_SOUNDS:preloadAllAudio()
+
+warn("preloaded audio")
 
 -- Cooldown before game starts
 task.wait(10)
@@ -367,6 +374,8 @@ on_player_died:Connect(onPlayerDied)
 on_player_joined:Connect(onPlayerJoined)
 on_player_left:Connect(onPlayerLeft)
 chat.player_chatted:Connect(playerChatted)
+
+warn("set up events")
 
 shared["server_module"] = server_module
 
