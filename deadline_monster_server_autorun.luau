@@ -233,15 +233,17 @@ function gameplay_module:reloadAllBotWeapons()
 end
 
 local function gameLoopStep()
-    while true do
-        task.wait(15)
-    end
+    task.wait(15)
 end
 
 function gameplay_module:startGameLoop()
     while gameplay_module.isGameActive do
         gameLoopStep()
     end
+end
+
+function gameplay_module:attemptToEndGameLoop()
+    gameplay_module.isGameActive = false
 end
 
 -- Event functions
@@ -354,7 +356,7 @@ chat.set_spawning_disabled_reason("You cannot spawn right now.")
 task.spawn(createEntities)
 
 -- While Loop
-task.spawn(gameLoop)
+task.spawn(startGameLoop)
 
 -- Events
 on_player_spawned:Connect(onPlayerSpawned)
