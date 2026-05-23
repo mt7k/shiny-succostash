@@ -1,6 +1,13 @@
 -- # Player Setup Codes Module
 local SETUPS = {
     primary = {
+        -- Gunlimits
+        --[[{
+            Name = "Example Weapon",
+            WeaponCode = "M4A1",
+            SetupCode = "4o7n-0252-dhen-23g4-2c87-cmm8-h112-8fg5"
+        },]]
+        -- Nogunlimits
         {
             Name = "LSW-556",
             WeaponCode = "SA58",
@@ -93,6 +100,13 @@ local SETUPS = {
         },
     },
     secondary = {
+        -- Gunlimits
+        {
+            Name = "Short MK9",
+            WeaponCode = "MK9",
+            SetupCode = "o2d9-0252-0m41-ana8-1n5q-wdb1-4wf0-owa3"
+        },
+        -- Nogunlimits
         {
             Name = "MP/15 Hybrid Carbine",
             WeaponCode = "M4A1",
