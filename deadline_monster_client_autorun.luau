@@ -147,8 +147,10 @@ end
 --  Method for the framework.on_spawned event
 function client_module.on_spawned()
     print("spawned")
-    anti_monster_device = client_module:createNewShield()
-    amd_connection = time.renderstep("AMS_update", AMS_update)
+    if shared.monsterShieldsEnabled == true then
+        anti_monster_device = client_module:createNewShield()
+        amd_connection = time.renderstep("AMS_update", AMS_update)
+    end
 end
 
 --  Method for the framework.on_died event
@@ -167,9 +169,27 @@ end
 local function renderstepFunction(delta_time)
     -- UI stuff
     if framework.character.is_alive() then
+        if shared.monsterShieldsEnabled == true then
+            if not anti_monster_device then
+                anti_monster_device = client_module:createNewShield()
+            end
+
+            if not amd_connection then
+                amd_connection = time.renderstep("AMS_update", AMS_update)
+            end
+
+        else
+            if anti_monster_device ~= nil then
+                anti_monster_device.destroy()
+            end
+
+            if amd_connection ~= nil then
+                amd_connection:Disconnect()
+                amd_connection = nil
+            end
+        end
+
         gui_module.draw()
-    -- else
-        -- ui for when the character is despawned
     end
 end
 

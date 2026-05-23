@@ -9,7 +9,8 @@ set_require_domain(domain)
 
 local server_module = {}
 local gameplay_module = {
-    isGameActive = false
+    isGameActive = false,
+    monsterShieldsEnabled = true,
 }
 
 -- Type Aliases
