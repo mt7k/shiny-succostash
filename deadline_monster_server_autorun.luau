@@ -23,8 +23,8 @@ local SERVER_SOUNDS = require("deadline_monster_utility.luau")
 -- Constants
 local MAP_CONFIG = {gamemode = "NONE", is_day = false, lights_out = true, map = "test_nuristan", time = 0}
 local MAP_PRESET = "darkworld"
-local MONSTER_COUNT = 20
-local ENEMY_BOT_COUNT = 0
+local MONSTER_COUNT = 0
+local ENEMY_BOT_COUNT = 20
 -- local CHAT_COMMAND_PREFIX = ":"
 
 -- Variables
@@ -236,13 +236,16 @@ local function gameLoopStep()
     task.wait(15)
 end
 
-function gameplay_module:startGameLoop()
-    while gameplay_module.isGameActive do
-        gameLoopStep()
+function gameplay_module.startGameLoop()
+    if not gameplay_module.isGameActive then
+        gameplay_module.isGameActive = true
+        while gameplay_module.isGameActive do
+            gameLoopStep()
+        end
     end
 end
 
-function gameplay_module:attemptToEndGameLoop()
+function gameplay_module.attemptToEndGameLoop()
     gameplay_module.isGameActive = false
 end
 
@@ -271,7 +274,7 @@ end
 local function onPlayerDied(name, death_position, killer_data, stats_counted)
     local player = players.get(name)
     if player then
-        if killer_data["type"] == "monster" then
+        if true then -- killer_data["type"] == "monster" then
             local death_sound_id = SERVER_SOUNDS:selectRandomIDFromCategory("death_monster")
 
             local death_sound_properties = {
@@ -356,7 +359,7 @@ chat.set_spawning_disabled_reason("You cannot spawn right now.")
 task.spawn(createEntities)
 
 -- While Loop
-task.spawn(startGameLoop)
+task.spawn(gameplay_module.startGameLoop)
 
 -- Events
 on_player_spawned:Connect(onPlayerSpawned)
