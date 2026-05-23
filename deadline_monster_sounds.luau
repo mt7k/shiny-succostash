@@ -80,15 +80,16 @@ function server_sound_module:insertPhysicalSoundToWorkspace(properties: physical
     end
 
     if not sound_instance.IsLoaded then
-        local threshold = 30
+        local threshold = 60
         repeat
             task.wait()
+            threshold -= 1
         until threshold <= 0 or sound_instance.IsLoaded
     end
 
     local sound_length = (sound_instance.TimeLength * 2) / properties.speed
     
-    sound_instance:Play()
+    sound_instance:play()
     debrisAddItem(part, sound_length)
 
     part.Parent = get_map_root()
