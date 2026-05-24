@@ -19,11 +19,6 @@ local SETUPS = {
         },
         -- Nogunlimits
         {
-            Name = "LSW-556",
-            WeaponCode = "SA58",
-            SetupCode = "4o7n-0252-dhen-23g4-2c87-cmm8-h112-8fg5"
-        },
-        {
             Name = "AK-102",
             WeaponCode = "AK_545",
             SetupCode = "3nh6-0252-6a3e-n81b-bo2c-f8he-q6eb-8ed7"
@@ -44,9 +39,19 @@ local SETUPS = {
             SetupCode = "09q4-0252-d3em-5wzw-4cmm-6w2w-12h5-nbdf"
         },
         {
+            Name = "AUG-308",
+            WeaponCode = "AUG_A3",
+            SetupCode = "fcf9-0252-3955-wcz0-0fze-72c3-ez0a-nq40"
+        },
+        {
             Name = "HK433",
             WeaponCode = "KF416",
             SetupCode = "22oc-0252-5q19-9geq-915w-nn4f-no3f-43zf"
+        },
+        {
+            Name = "LSW-556",
+            WeaponCode = "SA58",
+            SetupCode = "4o7n-0252-dhen-23g4-2c87-cmm8-h112-8fg5"
         },
         {
             Name = "MCX LVAW",

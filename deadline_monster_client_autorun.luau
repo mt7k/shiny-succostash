@@ -49,7 +49,16 @@ end
 -- \\ gui_module Methods
 function gui_module.draw()
     iris:Connect(function()
-        local gunInfoWindow = iris.Window({"GUN_INFORMATION"})
+        iris.Window({
+            [Iris.Args.Window.Title] = "GUN_INFORMATION",
+            [Iris.Args.Window.NoTitleBar] = true,
+            [Iris.Args.Window.NoBackground] = true,
+            [Iris.Args.Window.NoCollapse] = true,
+            [Iris.Args.Window.NoClose] = true,
+            [Iris.Args.Window.NoMove] = true,
+            [Iris.Args.Window.NoScrollbar] = true,
+            [Iris.Args.Window.NoResize] = true,
+        })
             iris.Text({"GUN_INFO_NAME"})
         iris.End()
     end)
@@ -151,6 +160,8 @@ function client_module.on_spawned()
         anti_monster_device = client_module:createNewShield()
         amd_connection = time.renderstep("AMS_update", AMS_update)
     end
+
+    gui_module.draw()
 end
 
 --  Method for the framework.on_died event
@@ -188,8 +199,6 @@ local function renderstepFunction(delta_time)
                 amd_connection = nil
             end
         end
-
-        gui_module.draw()
     end
 end
 
