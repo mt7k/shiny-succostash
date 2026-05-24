@@ -12,6 +12,9 @@ local gameplay_module = {}
 
 -- Type Aliases
 type luauInstance = {}
+type clientEventArguments = {
+    action: string,
+}
 
 -- Modules
 local PLAYER_SETUP_CODES = require("deadline_monster_setup_codes.luau")
@@ -27,11 +30,34 @@ local ENEMY_BOT_COUNT = 20
 
 -- Variables
 local player_setup_ignore_list = {} --:: {[string]: {["primary" | "secondary"]: {string}}}
-shared.monsterShieldsEnabled = true
-shared.isGameActive = false
 
 -- Functions
 -- \\ Server Module
+function server_module:setServerSharedVariable(name: string, value: any)
+    local sv_name = "sv_".. name
+    shared[sv_name] = value
+
+    local event_args = {
+        action = "setServerSharedVariable", 
+        sv_name = name,
+        sv_value = value
+    } :: clientEventArguments
+
+    for i, player in players.get_all() do
+        if not player.is_bot() then
+            player.fire_client(event_args)
+        end
+    end
+
+    return shared[sv_name]
+end
+
+function server_module:getServerSharedVariable(name: string)
+    local sv_name = "sv_".. name
+    
+    return shared[sv_name]
+end
+
 function server_module:getPlayerSetupIgnoreList(playerName: string)
     -- IF NOT found, create it
     local t = nil
@@ -233,20 +259,20 @@ function gameplay_module:reloadAllBotWeapons()
 end
 
 local function gameLoop()
-    while shared.isGameActive do
+    while server_module:getServerSharedVariable("isGameActive") do
         task.wait(15) -- code needed here
     end
 end
 
 function gameplay_module.startGameLoop()
-    if not shared.isGameActive then
-        shared.isGameActive = true
+    if not server_module:getServerSharedVariable("isGameActive") then
+        server_module:setServerSharedVariable("isGameActive", true)
         gameLoop()
     end
 end
 
 function gameplay_module.attemptToEndGameLoop()
-    shared.isGameActive = false
+    server_module:setServerSharedVariable("isGameActive", false)
 end
 
 -- Event functions
@@ -313,6 +339,10 @@ local function playerChatted(sender, channel, content)
     print(sender, channel, content)
 end
 
+local function onClientEvent(player, args)
+    print(player, args)
+end
+
 -- Runtime
 -- Character Property Changes
 sharedvars.plr_explosion_blast_pressure = 0;
@@ -343,6 +373,9 @@ map.set_map_from_config(MAP_CONFIG)
 map.set_preset(MAP_PRESET)
 map.kill_map_lights()
 
+server_module:setServerSharedVariable("monsterShieldsEnabled", true)
+server_module:setServerSharedVariable("isGameActive", false)
+
 -- Preload server audios
 SERVER_SOUNDS:preloadAllAudio()
 
@@ -365,6 +398,7 @@ on_player_died:Connect(onPlayerDied)
 on_player_joined:Connect(onPlayerJoined)
 on_player_left:Connect(onPlayerLeft)
 chat.player_chatted:Connect(playerChatted)
+on_client_event:Connect(onClientEvent)
 
 shared["server_module"] = server_module
 

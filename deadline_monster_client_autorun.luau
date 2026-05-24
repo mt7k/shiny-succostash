@@ -14,6 +14,12 @@ local renderstep_connection: RBXScriptConnection
 local amd_connection: RBXScriptConnection
 
 -- Methods
+local function getServerSharedVariable(name: string)
+    local sv_name = "sv_".. name
+    
+    return shared[sv_name]
+end
+
 -- \\ navigation_module Methods
 local function __isChildOfRestrictedFolder(instanceToLook)
     local isNotAChildOfWorkspace, _result = pcall(function(thisInstance)
@@ -156,7 +162,7 @@ end
 --  Method for the framework.on_spawned event
 function client_module.on_spawned()
     print("spawned")
-    if shared.monsterShieldsEnabled == true then
+    if getServerSharedVariable("monsterShieldsEnabled") == true then
         anti_monster_device = client_module:createNewShield()
         amd_connection = time.renderstep("AMS_update", AMS_update)
     end
@@ -180,15 +186,14 @@ end
 local function renderstepFunction(delta_time)
     -- UI stuff
     if framework.character.is_alive() then
-        if shared.monsterShieldsEnabled == true then
-            if not anti_monster_device then
+        if getServerSharedVariable("monsterShieldsEnabled") == true then
+            if anti_monster_device == nil then
                 anti_monster_device = client_module:createNewShield()
             end
 
-            if not amd_connection then
+            if amd_connection == nil then
                 amd_connection = time.renderstep("AMS_update", AMS_update)
             end
-
         else
             if anti_monster_device ~= nil then
                 anti_monster_device.destroy()
@@ -202,6 +207,18 @@ local function renderstepFunction(delta_time)
     end
 end
 
+local function onServerEvent(args)
+    local return_value: any
+    if args.action == "setServerSharedVariable" then
+        local index = "sv_".. args.sv_name
+        shared[index] = args.sv_value
+
+        return_value = shared[index]
+    end
+    
+    return return_value
+end
+
 -- Runtime
 -- \\ Replace/Swap Gun Sounds
 client_module:replace_gun_sounds("QBZ", "AK308", false)
@@ -213,6 +230,7 @@ client_module:replace_gun_sounds("AK_762", "FAL", false)
 renderstep_connection = time.renderstep("Monster Client Renderstep", renderstepFunction)
 framework.on_spawned:Connect(client_module.on_spawned)
 framework.on_died:Connect(client_module.on_died)
+on_server_event:Connect(onServerEvent)
 
 shared["client_module"] = client_module
 shared["gui_module"] = gui_module
