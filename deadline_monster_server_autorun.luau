@@ -37,7 +37,6 @@ local player_setup_ignore_list = {} --:: {[string]: {["primary" | "secondary"]: 
 -- \\ Server Module
 local function removeAllMapAmbience()
     for name, preset in config.sound_presets do
-        print(shared_restore_prefix, name)
         shared[shared_restore_prefix.. "_".. name] = preset
         for i, v in preset do
             preset[i] = nil
@@ -134,7 +133,6 @@ local function setupIgnoreListContainsGun(playerName: string, weaponCode: string
         if t_slot then
             if table.find(t_slot, setupCode) then
                 contains = true
-                print("setupIgnoreListContainsGun: found", setupCode, "in", playerName.. "'s", weaponCode, "setup ignore list")
             end
         else
             warn("addToSetupIgnoreList: player_setup_ignore_list[".. playerName.. "][".. weaponCode.."] is nil")
