@@ -219,7 +219,14 @@ local function onServerEvent(args)
     return return_value
 end
 
+local function fetchCurrentServerVariables()
+
+end
+
 -- Runtime
+-- Get server variables
+fetchCurrentServerVariables()
+
 -- \\ Replace/Swap Gun Sounds
 client_module:replace_gun_sounds("QBZ", "AK308", false)
 client_module:replace_gun_sounds("P320", "UMP9", false)

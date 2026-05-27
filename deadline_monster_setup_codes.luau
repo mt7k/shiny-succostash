@@ -21,7 +21,7 @@ local SETUPS = {
         {
             Name = "AK-102",
             WeaponCode = "AK_545",
-            SetupCode = "3nh6-0252-6a3e-n81b-bo2c-f8he-q6eb-8ed7"
+            SetupCode = "o1zc-0252-7m1f-9mdd-endh-nnn2-8eea-7g5z" -- normal: 3nh6-0252-6a3e-n81b-bo2c-f8he-q6eb-8ed7
         },
         {
             Name = "AK-104",
@@ -34,14 +34,14 @@ local SETUPS = {
             SetupCode = "4g93-0252-fg76-gz2m-e4g0-09aw-8z32-o5z4"
         },
         {
-            Name = "AK308k-SD",
+            Name = "AK-308k",
             WeaponCode = "AK308",
-            SetupCode = "09q4-0252-d3em-5wzw-4cmm-6w2w-12h5-nbdf"
+            SetupCode = "b86o-0252-ff2n-mw46-4hg8-4c0w-104z-wze3"
         },
         {
-            Name = "AUG-308",
+            Name = "AUG-762",
             WeaponCode = "AUG_A3",
-            SetupCode = "fcf9-0252-3955-wcz0-0fze-72c3-ez0a-nq40"
+            SetupCode = "60fh-0252-dc8m-qda4-om5z-z1qh-nh93-8n74"
         },
         {
             Name = "HK433",
@@ -87,6 +87,11 @@ local SETUPS = {
             Name = "RFB-308",
             WeaponCode = "QBZ95",
             SetupCode = "2gzw-0252-2chb-02nf-wo3d-m0gg-h7ng-foz9"
+        },
+        {
+            Name = "RPK-15",
+            WeaponCode = "AK308",
+            SetupCode = "ez8c-0252-h01c-g654-aqe0-o40w-abw8-5dg8"
         },
         {
             Name = "RPK-308",

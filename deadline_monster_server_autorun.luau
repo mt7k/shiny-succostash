@@ -1,3 +1,4 @@
+-- TODOS: finish sv replication
 -- # Server Autorun
 local branch = "main"
 if shared.isLoadingPreMainBranch == true then
@@ -26,6 +27,7 @@ local MAP_CONFIG = {gamemode = "NONE", is_day = false, lights_out = true, map = 
 local MAP_PRESET = "darkworld"
 local MONSTER_COUNT = 0
 local ENEMY_BOT_COUNT = 20
+local shared_restore_prefix = "RESTORE"
 -- local CHAT_COMMAND_PREFIX = ":"
 
 -- Variables
@@ -33,6 +35,42 @@ local player_setup_ignore_list = {} --:: {[string]: {["primary" | "secondary"]: 
 
 -- Functions
 -- \\ Server Module
+local function removeAllMapAmbience()
+    for name, preset in config.sound_presets do
+        print(shared_restore_prefix, name)
+        shared[shared_restore_prefix.. "_".. name] = preset
+        for i, v in preset do
+            preset[i] = nil
+        end
+    end
+end
+
+function server_module:getAllServerSharedVariables()
+    local variables = {} :: {[string]: any}
+    for i: string, v: any in shared do
+        if i:find("sv_") ~= nil then
+            local index_no_prefix = i:sub(4)
+            variables[index_no_prefix] = v
+        end
+    end
+
+    return variables
+end
+
+function server_module:giveAllServerSharedVariablesToPlayer(player: luauInstance)
+    local variables = self:getAllServerSharedVariables()
+
+    for i, v in variables do
+        local event_args = {
+            action = "setServerSharedVariable", 
+            sv_name = "sv_".. i,
+            sv_value = v
+        } :: clientEventArguments
+
+        player.fire_client(event_args)
+    end
+end
+
 function server_module:setServerSharedVariable(name: string, value: any)
     local sv_name = "sv_".. name
     shared[sv_name] = value
@@ -344,6 +382,9 @@ local function onClientEvent(player, args)
 end
 
 -- Runtime
+-- Removing Sound Presets
+removeAllMapAmbience()
+
 -- Character Property Changes
 sharedvars.plr_explosion_blast_pressure = 0;
 sharedvars.plr_explosion_damage_multiplier = 0;
