@@ -3,6 +3,12 @@ local client_module = {}
 local gui_module = {}
 local navigation_module = {}
 
+-- Type Aliases
+type luauInstance = {}
+type clientEventArguments = {
+    action: string,
+}
+
 -- Constants
 local AMS_DISTANCE = 7.5
 local SWITCH_SOUNDS = false :: boolean
@@ -218,7 +224,7 @@ local function renderstepFunction(delta_time)
     end
 end
 
-local function onServerEvent(args)
+local function onServerEvent(args: clientEventArguments)
     local return_value: any
     if args.action == "setServerSharedVariable" then
         local index = "sv_".. args.sv_name
