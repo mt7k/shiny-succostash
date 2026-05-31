@@ -32,13 +32,6 @@ local shared_restore_prefix = "RESTORE"
 
 -- Variables
 local player_setup_ignore_list = {} --:: {[string]: {["primary" | "secondary"]: {string}}}
-config.keybinds.toggle_godmode = table.clone(config.keybinds.move_forward)
-config.keybinds.toggle_godmode.name = "Toggle godmode"
-config.keybinds.toggle_godmode.description = "Toggles godmode"
-config.settings_layout.custom = {
-  { text= "Custom keybinds", type = "text" },
-  { keybind = "toggle_godmode", type = "keybind" }
-}
 
 -- Functions
 -- \\ Server Module

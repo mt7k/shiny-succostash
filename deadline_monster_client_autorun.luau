@@ -16,6 +16,14 @@ local current_custom_keybinds = {
 
 }
 
+config.keybinds.toggle_godmode = table.clone(config.keybinds.move_forward)
+config.keybinds.toggle_godmode.name = "Toggle godmode"
+config.keybinds.toggle_godmode.description = "Toggles godmode"
+config.settings_layout.custom = {
+  { text= "Custom keybinds", type = "text" },
+  { keybind = "toggle_godmode", type = "keybind" }
+}
+
 -- Methods
 local function getServerSharedVariable(name: string)
     local sv_name = "sv_".. name
