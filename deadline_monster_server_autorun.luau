@@ -458,6 +458,12 @@ task.spawn(createEntities)
 task.spawn(gameplay_module.startGameLoop)
 
 -- Events
+-- \\ Run on_player_joined on players that are in the game before this autorun executes
+for i, player in players.get_all() do
+    local name = player.name
+    onPlayerJoined(name)
+end
+
 on_player_spawned:Connect(onPlayerSpawned)
 on_player_died:Connect(onPlayerDied)
 on_player_joined:Connect(onPlayerJoined)
