@@ -33,6 +33,10 @@ config.settings_layout.custom = {
 -- Methods
 local function getServerSharedVariable(name: string)
     local sv_name = "sv_".. name
+    local return_value = shared[sv_name]
+    if not return_value then
+        warn("getServerSharedVariable: server variable \"".. name.. "\" was not found")
+    end
     
     return shared[sv_name]
 end
@@ -214,6 +218,7 @@ local function renderstepFunction(delta_time)
         else
             if anti_monster_device ~= nil then
                 anti_monster_device.destroy()
+                anti_monster_device = nil
             end
 
             if amd_connection ~= nil then
@@ -232,7 +237,7 @@ local function onServerEvent(data: {clientEventArguments}?)
         ",\nargs.sv_name =", args.sv_name,
         ",\nargs.sv_value =", args.sv_value, "\n}"
     )
-    
+
     if args.action == "setServerSharedVariable" then
         local index = "sv_".. args.sv_name
         shared[index] = args.sv_value
