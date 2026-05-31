@@ -359,10 +359,12 @@ end
 
 local function onPlayerJoined(name)
     local player = players.get(name)
+    print("onPlayerJoined: player", name, "joined")
     if player then
         server_module:setPlayerModelToTeamModel(player)
         server_module:getPlayerSetupIgnoreList(name)
         if not player.is_bot() then
+            print("// onPlayerJoined: player", name, "is not a bot")
             server_module:giveAllServerSharedVariablesToPlayer()
         end
     else
