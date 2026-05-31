@@ -329,6 +329,8 @@ local function onPlayerSpawned(name: string)
 
         if player.is_bot() then
             task.spawn(on_bot_spawned, player)
+        else
+            server_module:giveAllServerSharedVariablesToPlayer(player)
         end
     else
         warn("player could not be referenced:", name)
@@ -359,13 +361,11 @@ end
 
 local function onPlayerJoined(name)
     local player = players.get(name)
-    print("onPlayerJoined: player", name, "joined")
     if player then
         server_module:setPlayerModelToTeamModel(player)
         server_module:getPlayerSetupIgnoreList(name)
         if not player.is_bot() then
-            print("// onPlayerJoined: player", name, "is not a bot")
-            server_module:giveAllServerSharedVariablesToPlayer()
+            server_module:giveAllServerSharedVariablesToPlayer(player)
         end
     else
         warn("player could not be referenced:", name)
