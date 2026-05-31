@@ -224,8 +224,15 @@ local function renderstepFunction(delta_time)
     end
 end
 
-local function onServerEvent(args: clientEventArguments)
+local function onServerEvent(data: {clientEventArguments}?)
+    local args = data[1]
     local return_value: any
+    print("received event from server with args: {\n",
+        "args.action =", args.action,
+        ",\nargs.sv_name =", args.sv_name,
+        ",\nargs.sv_value =", args.sv_value, "\n}"
+    )
+    
     if args.action == "setServerSharedVariable" then
         local index = "sv_".. args.sv_name
         shared[index] = args.sv_value
@@ -234,6 +241,8 @@ local function onServerEvent(args: clientEventArguments)
 
         print("set", "sv_".. args.sv_name, "on the client to", args.sv_value)
     end
+
+    print("current value of", args.sv_name, "=", shared["sv_".. args.sv_name])
     
     return return_value
 end

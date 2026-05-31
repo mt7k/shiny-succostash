@@ -67,7 +67,7 @@ function server_module:giveAllServerSharedVariablesToPlayer(player: luauInstance
         } :: clientEventArguments
 
         player.fire_client(event_args)
-        print("giveAllServerSharedVariablesToPlayer: fired to client", player, "to set variable", name, "to", value)
+        print("giveAllServerSharedVariablesToPlayer: fired to client", player, "to set variable", i, "to", v)
     end
 end
 
