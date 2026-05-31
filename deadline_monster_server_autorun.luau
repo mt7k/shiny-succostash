@@ -20,7 +20,7 @@ type clientEventArguments = {
 -- Modules
 local PLAYER_SETUP_CODES = require("deadline_monster_setup_codes.luau")
 local SERVER_SOUNDS = require("deadline_monster_sounds.luau")
-local UTILITY = require("deadline_monster_utility.luau")
+local UTILITY = require("deadline_monster_global_utility.luau")
 
 -- Constants
 local MAP_CONFIG = {gamemode = "NONE", is_day = false, lights_out = true, map = "test_nuristan", time = 0}
@@ -32,6 +32,13 @@ local shared_restore_prefix = "RESTORE"
 
 -- Variables
 local player_setup_ignore_list = {} --:: {[string]: {["primary" | "secondary"]: {string}}}
+config.keybinds.toggle_godmode = table.clone(config.keybinds.move_forward)
+config.keybinds.toggle_godmode.name = "Toggle godmode"
+config.keybinds.toggle_godmode.description = "Toggles godmode"
+config.settings_layout.custom = {
+  { text= "Custom keybinds", type = "text" },
+  { keybind = "toggle_godmode", type = "keybind" }
+}
 
 -- Functions
 -- \\ Server Module
@@ -287,7 +294,7 @@ function gameplay_module:reloadAllBotWeapons()
             if active_slot then
                 local player_weapon = player.get_weapon_data_from_character(active_slot)
                 if player_weapon.xyz then
-
+                    
                 end
             end
         end
@@ -380,38 +387,56 @@ local function onClientEvent(player, args)
 end
 
 -- Runtime
--- Removing Sound Presets
+-- \\ Removing Sound Presets
 removeAllMapAmbience()
 
 -- Character Property Changes
-sharedvars.plr_explosion_blast_pressure = 0;
-sharedvars.plr_explosion_damage_multiplier = 0;
+-- \\ Appearance
 sharedvars.plr_model = "main_backup"
 sharedvars.plr_nv_color = Color3.fromRGB(224, 255, 255)
-sharedvars.plr_fall_damage = false
 sharedvars.plr_enable_markers = false
-sharedvars.plr_jump_multiplier = 0.85
-sharedvars.plr_jump_frequency = 0.25
-sharedvars.plr_stamina_run_drain = 0.25
-sharedvars.plr_stamina_regen = 0.05
+-- \\ Movement
+sharedvars.plr_fall_damage = false
+sharedvars.plr_jump_multiplier = 0.875
+sharedvars.plr_jump_frequency = 0.5
 sharedvars.plr_speed = 1.05
+-- \\ Movement Restrictions
+sharedvars.plr_stamina_regen = 0.25
+sharedvars.plr_stamina_jump_drain = 1.25
+sharedvars.plr_stamina_lean_drain = 0.325
+sharedvars.plr_stamina_run_drain = 0.25
+sharedvars.plr_stamina_shake_multiplier = 0.75
+sharedvars.plr_max_stamina = 240
+sharedvars.plr_vault_stamina_drain = 1.75
+-- \\ Weapon Performance
+sharedvars.plr_max_arm_stamina = 75
+sharedvars.plr_arm_stamina_drain = 6
+sharedvars.plr_arm_stamina_drain_hold_breath = 6
+sharedvars.plr_arm_stamina_regen = 9
+sharedvars.plr_arm_stamina_regen_crouch = 3.75
+sharedvars.plr_explosion_blast_pressure = 0
+sharedvars.plr_explosion_damage_multiplier = 0
 sharedvars.plr_weapon_clamp_stats_values = false
 
 -- Game Property Changes
+-- \\ Anti-cheat
+sharedvars.ac_movement = false
+-- \\ Messages & Chat
 chat.set_join_message("The monster is hunting.")
 chat.set_spawning_disabled_reason("Be patient.")
-sharedvars.ac_movement = false
 sharedvars.chat_announce_changes = false
 sharedvars.chat_tips_enabled = false
 sharedvars.chat_max_history = 200
+-- \\ Gameplay Restrictions
 sharedvars.editor_mount_anything = true
 sharedvars.gm_team_balancing_threshold = 1000
 sharedvars.sv_spawning_enabled = false
-sharedvars.voxel_bullet_destruction_radius = 1
+-- \\ Environment
 map.set_map_from_config(MAP_CONFIG)
 map.set_preset(MAP_PRESET)
 map.kill_map_lights()
-
+sharedvars.voxel_bullet_destruction_radius = 1
+-- \\ Custom Server Variables
 server_module:setServerSharedVariable("monsterShieldsEnabled", true)
 server_module:setServerSharedVariable("isGameActive", false)
 
@@ -428,7 +453,7 @@ chat.set_spawning_disabled_reason("You cannot spawn right now.")
 -- Spawn Entities
 task.spawn(createEntities)
 
--- While Loop
+-- Gameplay Loop
 task.spawn(gameplay_module.startGameLoop)
 
 -- Events

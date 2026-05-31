@@ -84,6 +84,11 @@ local SETUPS = {
             SetupCode = "a1fz-0252-5gch-3h4b-d1bd-27g3-gaca-0543"
         },
         {
+            Name = "QBZ-192",
+            WeaponCode = "AK_545",
+            SetupCode = "35ez-0252-38c0-3eff-qbd4-8d93-60q1-q3df"
+        },
+        {
             Name = "RFB-308",
             WeaponCode = "QBZ95",
             SetupCode = "2gzw-0252-2chb-02nf-wo3d-m0gg-h7ng-foz9"
@@ -124,7 +129,7 @@ local SETUPS = {
         {
             Name = "416C",
             WeaponCode = "KF416",
-            SetupCode = "z5hf-0252-n2qe-7f7d-b89o-cq1c-ec1f-01gq"
+            SetupCode = "fnfq-0252-w59b-e4ac-qzd1-b5q2-3hn3-ca4m"
         },
         {
             Name = "AKS-74U",

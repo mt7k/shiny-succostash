@@ -12,6 +12,9 @@ local ONLY_SWAP_VALID_SOUNDS = false :: boolean
 local anti_monster_device: Part
 local renderstep_connection: RBXScriptConnection
 local amd_connection: RBXScriptConnection
+local current_custom_keybinds = {
+
+}
 
 -- Methods
 local function getServerSharedVariable(name: string)
@@ -223,6 +226,15 @@ local function fetchCurrentServerVariables()
 
 end
 
+local function customKeybind_moveForward()
+    print("stopped pressing W")
+end
+
+local function bind_user_setting(func: thread, inputType: InputType, name: string)
+    ClientInputGroup:bind_user_setting(func, inputType, name)
+    current_custom_keybinds[name] = true
+end
+
 -- Runtime
 -- Get server variables
 fetchCurrentServerVariables()
@@ -234,10 +246,18 @@ client_module:replace_gun_sounds("HK416", "M4A1", false)
 client_module:replace_gun_sounds("AK_762", "FAL", false)
 
 -- \\ Connect Events
+-- \\\\ Constant events
 renderstep_connection = time.renderstep("Monster Client Renderstep", renderstepFunction)
+
+-- \\\\ Game Events
 framework.on_spawned:Connect(client_module.on_spawned)
 framework.on_died:Connect(client_module.on_died)
+
+-- \\\\ Server Events
 on_server_event:Connect(onServerEvent)
+
+-- \\\\ Keybind Events
+bind_user_setting(customKeybind_moveForward, InputType.Ended, "custom_keybind1")
 
 shared["client_module"] = client_module
 shared["gui_module"] = gui_module
