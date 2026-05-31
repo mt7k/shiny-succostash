@@ -25,8 +25,8 @@ local UTILITY = require("deadline_monster_global_utility.luau")
 -- Constants
 local MAP_CONFIG = {gamemode = "NONE", is_day = false, lights_out = true, map = "test_nuristan", time = 0}
 local MAP_PRESET = "darkworld"
-local MONSTER_COUNT = 0
-local ENEMY_BOT_COUNT = 20
+local MONSTER_COUNT = 15
+local ENEMY_BOT_COUNT = 0
 local shared_restore_prefix = "RESTORE"
 -- local CHAT_COMMAND_PREFIX = ":"
 
