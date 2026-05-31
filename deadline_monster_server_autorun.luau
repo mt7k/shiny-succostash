@@ -62,7 +62,7 @@ function server_module:giveAllServerSharedVariablesToPlayer(player: luauInstance
     for i, v in variables do
         local event_args = {
             action = "setServerSharedVariable", 
-            sv_name = "sv_".. i,
+            sv_name = i,
             sv_value = v
         } :: clientEventArguments
 
@@ -359,6 +359,9 @@ local function onPlayerJoined(name)
     if player then
         server_module:setPlayerModelToTeamModel(player)
         server_module:getPlayerSetupIgnoreList(name)
+        if not player.is_bot() then
+            server_module:giveAllServerSharedVariablesToPlayer()
+        end
     else
         warn("player could not be referenced:", name)
     end

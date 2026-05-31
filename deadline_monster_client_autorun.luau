@@ -225,6 +225,8 @@ local function onServerEvent(args)
         shared[index] = args.sv_value
 
         return_value = shared[index]
+
+        print("set", "sv_".. args.sv_name, "on the client to", args.sv_value)
     end
     
     return return_value
@@ -239,7 +241,7 @@ local function customKeybind_moveForward()
 end
 
 local function bind_user_setting(func: thread, inputType: InputType, name: string)
-    ClientInputGroup:bind_user_setting(func, inputType, name)
+    -- ClientInputGroup:bind_user_setting(func, inputType, name)
     current_custom_keybinds[name] = true
 end
 
