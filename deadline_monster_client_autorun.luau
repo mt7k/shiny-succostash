@@ -19,6 +19,7 @@ local ONLY_SWAP_VALID_SOUNDS = false :: boolean
 
 -- Variables
 local anti_monster_device: Part
+local anti_monster_model: Model
 local renderstep_connection: RBXScriptConnection
 local amd_connection: RBXScriptConnection
 local current_custom_keybinds = {
@@ -130,11 +131,11 @@ end
 
 -- Creates a transparent shield that gives players a way to directly look at the monster without it disappearing
 -- and lets players approach the monster (as long as the shield covers them)
-function client_module:createNewShield(): Part
+function client_module:createNewLegacyShield(): Part
     if anti_monster_device then
         anti_monster_device.destroy()
     end
-    
+
     local ams: Part = create_instance("Part")
     ams.Name = "Anti-Monster Shield"
     ams.Transparency = 0
@@ -161,9 +162,97 @@ function client_module:createNewShield(): Part
     return ams
 end
 
+function client_module:createNewShieldModel(): Model
+    if anti_monster_device then
+        anti_monster_device.destroy()
+    end
+
+    local panel_thickness = 0.125
+    local panel_width = 1
+    local panel_radius = 3
+    local panel_adjusted_width = panel_width + 2 * panel_thickness
+
+    local ams_parts = {}:: {[string]: Part}
+    local front_panel: Part
+    local back_panel: Part
+    local top_panel: Part
+    local bottom_panel: Part
+    local left_panel: Part
+    local right_panel: Part
+    
+    local ams: Model = create_instance("Model")
+    ams.Name = "Anti-Monster Shield Model"
+
+    for i = 1, 6, 1 do
+        local shield_part: Part = create_instance("Part")
+        ams_parts[i] = shield_part
+
+        shield_part.Name = "Anti-Monster Shield Panel"
+        shield_part.CollisionGroup = "wall"
+        shield_part.Transparency = 0
+        shield_part.Material = Enum.Material.ForceField
+        shield_part.Shape = Enum.PartType.Block
+        shield_part.Position = Vector3.new()
+        shield_part.Size = Vector3.new(panel_adjusted_width, panel_adjusted_width, panel_thickness)
+        shield_part.Color = Color3.fromRGB(255, 255, 255)
+        shield_part.CastShadow = false
+        shield_part.Anchored = true
+        shield_part.CanCollide = false
+        shield_part.CanQuery = true -- This needs to be enabled
+        shield_part.CanTouch = false
+    end
+
+    front_panel = ams_parts[1]
+    front_panel.Name = front_panel.Name.. " (Front)"
+    front_panel.Orientation = Vector3.new(0, 0, 0)
+    front_panel:PivotTo(front_panel:GetPivot().LookVector * panel_radius + panel_thickness)
+
+    back_panel = ams_parts[2]
+    back_panel.Name = back_panel.Name.. " (Back)"
+    back_panel.Orientation = Vector3.new(180, 0, 180)
+    back_panel:PivotTo(back_panel:GetPivot().LookVector * panel_radius + panel_thickness)
+
+    top_panel = ams_parts[3]
+    top_panel.Name = top_panel.Name.. " (Top)"
+    top_panel.Orientation = Vector3.new(90, 0, 0)
+    top_panel:PivotTo(top_panel:GetPivot().LookVector * panel_radius + panel_thickness)
+
+    bottom_panel = ams_parts[4]
+    bottom_panel.Name = bottom_panel.Name.. " (Bottom)"
+    bottom_panel.Orientation = Vector3.new(-90, 0, 0)
+    bottom_panel:PivotTo(bottom_panel:GetPivot().LookVector * panel_radius + panel_thickness)
+
+    left_panel = ams_parts[5]
+    left_panel.Name = left_panel.Name.. " (Left)"
+    left_panel.Orientation = Vector3.new(0, 90, 0)
+    left_panel:PivotTo(left_panel:GetPivot().LookVector * panel_radius + panel_thickness)
+
+    right_panel = ams_parts[6]
+    right_panel.Name = right_panel.Name.. " (Right)"
+    right_panel.Orientation = Vector3.new(0, -90, 0)
+    right_panel:PivotTo(right_panel:GetPivot().LookVector * panel_radius + panel_thickness)
+
+    for _, part: Part in ams_parts do
+        part.Parent = ams
+    end
+
+    ams.Parent = get_map_root() -- navigation_module:getIgnoreFolderUsingTaggedChildren()
+    
+    return ams
+end
+
 -- Renderstep function for the AMS_update renderstep loop
 -- Updates the AMD position
-local function AMS_update(delta_time)
+local function new_AMS_update(delta_time)
+    if framework.character.is_alive() then
+        local root_position: Vector3 = framework.character.get_position()
+        local new_model_cframe: CFrame = CFrame.new(root_position)
+        anti_monster_model:PivotTo(new_model_cframe)
+        print((root_position - anti_monster_model:GetPivot().Position).Magnitude)
+    end
+end
+
+local function legacy_AMS_update(delta_time)
     if framework.character.is_alive() then
         if anti_monster_device ~= nil then
             local camera_cframe: CFrame = framework.character.get_camera_cframe()
@@ -187,21 +276,20 @@ local function AMS_update(delta_time)
     end
 end
 
---  Method for the framework.on_spawned event
-function client_module.on_spawned()
-    print("spawned")
-    if getServerSharedVariable("monsterShieldsEnabled") == true then
-        amd_connection = time.renderstep("AMS_update", AMS_update)
+local function setupShieldIfNeeded()
+    if anti_monster_device == nil then
+        anti_monster_device = client_module:createNewLegacyShield()
     end
 
-    gui_module.draw()
+    if amd_connection == nil then
+        amd_connection = time.renderstep("AMS_update", new_AMS_update)
+    end
 end
 
---  Method for the framework.on_died event
-function client_module.on_died()
-    print("died")
+local function disableShieldIfNeeded()
     if anti_monster_device ~= nil then
         anti_monster_device.destroy()
+        anti_monster_device = nil
     end
 
     if amd_connection ~= nil then
@@ -210,38 +298,32 @@ function client_module.on_died()
     end
 end
 
+--  Method for the framework.on_spawned event
+function client_module.on_spawned()
+    print("spawned")
+    if getServerSharedVariable("monsterShieldsEnabled") == true then
+        amd_connection = time.renderstep("AMS_update", new_AMS_update)
+    end
+
+    gui_module.draw()
+end
+
+--  Method for the framework.on_died event
+function client_module.on_died()
+    print("died")
+    disableShieldIfNeeded()
+end
+
 local function renderstepFunction(delta_time)
     -- UI stuff
     if framework.character.is_alive() then
         if getServerSharedVariable("monsterShieldsEnabled") == true then
-            if anti_monster_device == nil then
-                anti_monster_device = client_module:createNewShield()
-            end
-
-            if amd_connection == nil then
-                amd_connection = time.renderstep("AMS_update", AMS_update)
-            end
+            setupShieldIfNeeded()
         else
-            if anti_monster_device ~= nil then
-                anti_monster_device.destroy()
-                anti_monster_device = nil
-            end
-
-            if amd_connection ~= nil then
-                amd_connection:Disconnect()
-                amd_connection = nil
-            end
+            disableShieldIfNeeded()
         end
     else
-        if anti_monster_device ~= nil then
-            anti_monster_device.destroy()
-            anti_monster_device = nil
-        end
-
-        if amd_connection ~= nil then
-            amd_connection:Disconnect()
-            amd_connection = nil
-        end
+        disableShieldIfNeeded()
     end
 end
 

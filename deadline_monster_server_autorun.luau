@@ -311,7 +311,7 @@ local function gameLoop()
         sharedvars.sv_spawning_enabled = true
         chat.set_spawning_disabled_reason("You cannot spawn right now.")
 
-        
+        task.wait(100)
     end
 end
 
