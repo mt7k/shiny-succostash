@@ -297,9 +297,21 @@ function gameplay_module:reloadAllBotWeapons()
     end
 end
 
+local function GameLoopStartingVariableChanges()
+    sharedvars.sv_spawning_enabled = false
+    chat.set_spawning_disabled_reason("Be patient.")
+end
+
 local function gameLoop()
     while server_module:getServerSharedVariable("isGameActive") do
-        task.wait(15) -- code needed here
+        GameLoopStartingVariableChanges()
+
+        task.wait(15) -- Cooldown before game starts
+
+        sharedvars.sv_spawning_enabled = true
+        chat.set_spawning_disabled_reason("You cannot spawn right now.")
+
+        
     end
 end
 
@@ -388,7 +400,7 @@ local function onClientEvent(player, args)
 end
 
 -- Runtime
--- \\ Removing Sound Presets
+-- \\ Removing Sound Presets (doesnt work right now)
 removeAllMapAmbience()
 
 -- Character Property Changes
@@ -409,6 +421,12 @@ sharedvars.plr_stamina_run_drain = 0.25
 sharedvars.plr_stamina_shake_multiplier = 0.75
 sharedvars.plr_max_stamina = 240
 sharedvars.plr_vault_stamina_drain = 1.75
+-- \\ Utility Modifications
+sharedvars.plr_grenade_throw_strength = 0.95
+sharedvars.plr_shove_headshot_damage = 105
+-- \\ Weapon Modifications
+sharedvars.plr_drum_magazines = 3
+sharedvars.plr_magazines = 7
 -- \\ Weapon Performance
 sharedvars.plr_max_arm_stamina = 75
 sharedvars.plr_arm_stamina_drain = 6
@@ -418,6 +436,9 @@ sharedvars.plr_arm_stamina_regen_crouch = 3.75
 sharedvars.plr_explosion_blast_pressure = 0
 sharedvars.plr_explosion_damage_multiplier = 0
 sharedvars.plr_weapon_clamp_stats_values = false
+-- \\ Miscellaneous
+sharedvars.plr_instant_lobby_return_time = 30
+sharedvars.plr_enable_gangsta_control = false
 
 -- Game Property Changes
 -- \\ Anti-cheat
@@ -440,21 +461,17 @@ sharedvars.voxel_bullet_destruction_radius = 1
 -- \\ Custom Server Variables
 server_module:setServerSharedVariable("monsterShieldsEnabled", true)
 server_module:setServerSharedVariable("isGameActive", false)
+-- \\ Game Initiation
+GameLoopStartingVariableChanges()
 
 -- Preload server audios
 SERVER_SOUNDS:preloadAllAudio()
 
--- Cooldown before game starts
-task.wait(10)
-
 -- Start the game, spawn the monster(s).
-sharedvars.sv_spawning_enabled = true
-chat.set_spawning_disabled_reason("You cannot spawn right now.")
-
--- Spawn Entities
+-- \\ Spawn Entities
 task.spawn(createEntities)
 
--- Gameplay Loop
+-- \\ Gameplay Loop
 task.spawn(gameplay_module.startGameLoop)
 
 -- Events

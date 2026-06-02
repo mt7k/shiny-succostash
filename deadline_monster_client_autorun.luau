@@ -8,6 +8,9 @@ type luauInstance = {}
 type clientEventArguments = {
     action: string,
 }
+type serverEventArguments = {
+    action: string,
+}
 
 -- Constants
 local AMS_DISTANCE = 7.5
@@ -128,6 +131,10 @@ end
 -- Creates a transparent shield that gives players a way to directly look at the monster without it disappearing
 -- and lets players approach the monster (as long as the shield covers them)
 function client_module:createNewShield(): Part
+    if anti_monster_device then
+        anti_monster_device.destroy()
+    end
+    
     local ams: Part = create_instance("Part")
     ams.Name = "Anti-Monster Shield"
     ams.Transparency = 0
@@ -184,7 +191,6 @@ end
 function client_module.on_spawned()
     print("spawned")
     if getServerSharedVariable("monsterShieldsEnabled") == true then
-        anti_monster_device = client_module:createNewShield()
         amd_connection = time.renderstep("AMS_update", AMS_update)
     end
 
@@ -226,34 +232,38 @@ local function renderstepFunction(delta_time)
                 amd_connection = nil
             end
         end
+    else
+        if anti_monster_device ~= nil then
+            anti_monster_device.destroy()
+            anti_monster_device = nil
+        end
+
+        if amd_connection ~= nil then
+            amd_connection:Disconnect()
+            amd_connection = nil
+        end
     end
 end
 
-local function onServerEvent(data: {clientEventArguments}?)
-    local args = data[1]
+local function onServerEvent(data: {any | clientEventArguments?})
+    local args = data[1] -- why? idk
     local return_value: any
-    print("received event from server with args: {\n",
-        "args.action =", args.action,
-        ",\nargs.sv_name =", args.sv_name,
-        ",\nargs.sv_value =", args.sv_value, "\n}"
-    )
 
     if args.action == "setServerSharedVariable" then
         local index = "sv_".. args.sv_name
         shared[index] = args.sv_value
 
         return_value = shared[index]
-
-        print("set", "sv_".. args.sv_name, "on the client to", args.sv_value)
     end
-
-    print("current value of", args.sv_name, "=", shared["sv_".. args.sv_name])
     
     return return_value
 end
 
 local function fetchCurrentServerVariables()
-
+    local event_args = {
+        action = "fetchCurrentServerVariables"
+    }
+    fire_server(event_args)
 end
 
 local function customKeybind_moveForward()

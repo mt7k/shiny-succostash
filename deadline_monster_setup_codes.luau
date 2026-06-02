@@ -64,7 +64,12 @@ local SETUPS = {
             SetupCode = "w74n-0252-f4ac-a7mz-n93c-o2n1-3146-7mg1"
         },
         {
-            Name = "MK18 w/ M203",
+            Name = "Mk18 LSW",
+            WeaponCode = "M4A1",
+            SetupCode = "2c1z-0252-za29-wqz5-4hdw-qfgh-43o7-nf6g"
+        },
+        {
+            Name = "Mk18 w/ M203",
             WeaponCode = "M4A1",
             SetupCode = "hnfd-0252-326e-8589-603c-6zd4-bn6q-eeqa"
         },
