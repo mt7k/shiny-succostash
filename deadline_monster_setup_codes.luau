@@ -44,6 +44,11 @@ local SETUPS = {
             SetupCode = "60fh-0252-dc8m-qda4-om5z-z1qh-nh93-8n74"
         },
         {
+            Name = "F2000",
+            WeaponCode = "M4A1",
+            SetupCode = "g20q-0252-b338-gaz3-eaq2-1meo-g427-327q"
+        },
+        {
             Name = "HK433",
             WeaponCode = "KF416",
             SetupCode = "22oc-0252-5q19-9geq-915w-nn4f-no3f-43zf"

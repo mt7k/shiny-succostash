@@ -67,7 +67,6 @@ function server_module:giveAllServerSharedVariablesToPlayer(player: luauInstance
         } :: clientEventArguments
 
         player.fire_client(event_args)
-        print("giveAllServerSharedVariablesToPlayer: fired to client", player, "to set variable", i, "to", v)
     end
 end
 
@@ -84,8 +83,6 @@ function server_module:setServerSharedVariable(name: string, value: any)
     for i, player in players.get_all() do
         if not player.is_bot() then
             player.fire_client(event_args)
-            
-            print("setServerSharedVariable: fired to client", player, "to set variable", name, "to", value)
         end
     end
 

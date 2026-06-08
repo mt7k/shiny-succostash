@@ -109,7 +109,7 @@ function client_module:replace_gun_sounds(destination: string, target: string, s
             local original_target_sound = value
             local original_dest_sound = config.gunshots[original_destination_sound_name]
 
-            local is_dest_sound_valid = ONLY_SWAP_VALID_SOUNDS and original_dest_sound ~= nil or true
+            local is_dest_sound_valid = ONLY_SWAP_VALID_SOUNDS == true and original_dest_sound ~= nil or true
             if is_dest_sound_valid then
                 if SWITCH_SOUNDS then
                     config.gunshots[name] = original_dest_sound
