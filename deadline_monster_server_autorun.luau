@@ -395,13 +395,14 @@ local function playerChatted(sender, channel, content)
     print(sender, channel, content)
 end
 
-local function onClientEvent(player, data: {any | serverEventArguments?})
+local function onClientEvent(playerName: string, data: {any | serverEventArguments?})
+    local playerInstance = players.get(playerName)
     local args = data[1] -- why? idk
 
-    print(player, ", args: ", args)
+    print(playerName, ", args: ", args)
 
     if args.action == "fetchCurrentServerVariables" then
-        server_module:giveAllServerSharedVariablesToPlayer(player)
+        server_module:giveAllServerSharedVariablesToPlayer(playerInstance)
     end
 end
 
