@@ -265,9 +265,19 @@ local function disableShieldIfNeeded()
     end
 end
 
+local function fetchCurrentServerVariables()
+    local event_args = {
+        action = "fetchCurrentServerVariables"
+    }
+    fire_server(event_args)
+end
+
 --  Method for the framework.on_spawned event
 function client_module.on_spawned()
     print("spawned")
+    
+    fetchCurrentServerVariables()
+
     if getServerSharedVariable("monsterShieldsEnabled") == true then
         amd_connection = time.renderstep("AMS_update", AMS_update)
     end
@@ -296,23 +306,11 @@ end
 
 local function onServerEvent(data: {any | clientEventArguments?})
     local args = data[1] -- why? idk
-    local return_value: any
 
     if args.action == "setServerSharedVariable" then
         local index = "sv_".. args.sv_name
         shared[index] = args.sv_value
-
-        return_value = shared[index]
     end
-    
-    return return_value
-end
-
-local function fetchCurrentServerVariables()
-    local event_args = {
-        action = "fetchCurrentServerVariables"
-    }
-    fire_server(event_args)
 end
 
 local function customKeybind_moveForward()

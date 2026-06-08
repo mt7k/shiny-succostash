@@ -16,6 +16,9 @@ type luauInstance = {}
 type clientEventArguments = {
     action: string,
 }
+type serverEventArguments = {
+    action: string,
+}
 
 -- Modules
 local PLAYER_SETUP_CODES = require("deadline_monster_setup_codes.luau")
@@ -392,8 +395,14 @@ local function playerChatted(sender, channel, content)
     print(sender, channel, content)
 end
 
-local function onClientEvent(player, args)
-    print(player, args)
+local function onClientEvent(player, data: {any | serverEventArguments?})
+    local args = data[1] -- why? idk
+
+    print(player, ", args: ", args)
+
+    if args.action == "fetchCurrentServerVariables" then
+        server_module:giveAllServerSharedVariablesToPlayer(player)
+    end
 end
 
 -- Runtime
