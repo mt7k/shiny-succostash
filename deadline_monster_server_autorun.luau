@@ -402,6 +402,7 @@ local function onClientEvent(playerName: string, data: {any | serverEventArgumen
     print(playerName, ", args: ", args)
 
     if args.action == "fetchCurrentServerVariables" then
+        print(playerInstance)
         server_module:giveAllServerSharedVariablesToPlayer(playerInstance)
     end
 end
