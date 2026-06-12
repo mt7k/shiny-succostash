@@ -218,10 +218,7 @@ function client_module:createNewShieldModel()
     
     -- ams.PrimaryPart = model_primary
     ams.Parent = get_map_root() -- navigation_module:getIgnoreFolderUsingTaggedChildren()
-    
-    print("AMS:", ams)
     anti_monster_model = ams
-    print("anti_monster_model (creating stage):", ams)
 end
 
 -- Renderstep function for the AMS_update renderstep loop
@@ -266,18 +263,15 @@ local function disableShieldIfNeeded()
 end
 
 local function fetchCurrentServerVariables()
-    local event_args = {
-        action = "fetchCurrentServerVariables"
-    }
+    local event_args = { action = "fetchCurrentServerVariables" }
     fire_server(event_args)
 end
 
 --  Method for the framework.on_spawned event
 function client_module.on_spawned()
     print("spawned")
-    
-    fetchCurrentServerVariables()
 
+    fetchCurrentServerVariables()
     if getServerSharedVariable("monsterShieldsEnabled") == true then
         amd_connection = time.renderstep("AMS_update", AMS_update)
     end
@@ -310,6 +304,18 @@ local function onServerEvent(data: {any | clientEventArguments?})
     if args.action == "setServerSharedVariable" then
         local index = "sv_".. args.sv_name
         shared[index] = args.sv_value
+    elseif args.action == "setServerSharedVariable" then
+        local camera_cframe = framework.character.get_camera_cframe()
+        local character_position = framework.character.get_position()
+        local event_args = {
+            action = "giveSnapshotPlayerPivot",
+            snapshot = {
+                camera_cframe = camera_cframe,
+                char_position = character_position
+            }
+        }
+
+        fire_server(event_args)
     end
 end
 

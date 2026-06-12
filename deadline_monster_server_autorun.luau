@@ -30,6 +30,7 @@ local MAP_CONFIG = {gamemode = "NONE", is_day = false, lights_out = true, map = 
 local MAP_PRESET = "darkworld"
 local MONSTER_COUNT = 15
 local ENEMY_BOT_COUNT = 0
+local HORROR_SOUND_PROPERTIES = SERVER_SOUNDS:getPhysicalSoundPropertyTables()
 local shared_restore_prefix = "RESTORE"
 -- local CHAT_COMMAND_PREFIX = ":"
 
@@ -39,6 +40,7 @@ local player_setup_ignore_list = {} --:: {[string]: {["primary" | "secondary"]: 
 -- Functions
 -- \\ Server Module
 local function removeAllMapAmbience()
+    -- Non-functional
     for name, preset in config.sound_presets do
         shared[shared_restore_prefix.. "_".. name] = preset
         for i, v in preset do
@@ -98,22 +100,7 @@ function server_module:getServerSharedVariable(name: string)
     return shared[sv_name]
 end
 
-function server_module:getPlayerSetupIgnoreList(playerName: string)
-    -- IF NOT found, create it
-    local t = nil
-    if player_setup_ignore_list[playerName] then
-        t = player_setup_ignore_list[playerName]
-    else
-        player_setup_ignore_list[playerName] = {
-            primary = {},
-            secondary = {}
-        }
-        t = player_setup_ignore_list[playerName]
-    end
-
-    return t
-end
-
+-- \\ Setup Handling Functions
 local function addToSetupIgnoreList(playerName: string, weaponCode: string, setupCode: string)
     local t = player_setup_ignore_list[playerName]
     if t then
@@ -159,7 +146,6 @@ local function resetSetupIgnoreList(playerName: string, weaponCode: string)
     else
         if player_setup_ignore_list[playerName] then
             player_setup_ignore_list[playerName] = {}
-            warn("resetSetupIgnoreList: reset", playerName.. "'s setup ignore list")
         else
             warn("resetSetupIgnoreList: player_setup_ignore_list[".. playerName.. "] is nil")
         end
@@ -217,6 +203,22 @@ local function getRandomSetupCode(slot_code: string, player: luauInstance | stri
     end
 
     return setup_code, weapon_code
+end
+
+function server_module:getPlayerSetupIgnoreList(playerName: string)
+    -- IF NOT found, create it
+    local t = nil
+    if player_setup_ignore_list[playerName] then
+        t = player_setup_ignore_list[playerName]
+    else
+        player_setup_ignore_list[playerName] = {
+            primary = {},
+            secondary = {}
+        }
+        t = player_setup_ignore_list[playerName]
+    end
+
+    return t
 end
 
 function server_module:setSlotToSetupFromCode(player: luauInstance, slot_code: string, weapon_code: string, setup_string: string)
@@ -286,13 +288,49 @@ end
 function gameplay_module:reloadAllBotWeapons()
     for _, player in players.get_all() do
         if player.is_bot() then
-            local active_slot = player.get_active_slot()
-            if active_slot then
-                local player_weapon = player.get_weapon_data_from_character(active_slot)
-                if player_weapon.xyz then
-                    
+            task.spawn(function()
+                local active_slot = player.get_active_slot()
+                if active_slot then
+                    local player_weapon = player.get_weapon_data_from_character(active_slot)
+                    local server_ammo_table = player_weapon.ammo
+                    local client_ammo_table = player_weapon.client_data.ammo
+                    if server_ammo_table.rounds_in_magazine <= 0 then
+                        if not server_ammo_table.is_round_chambered and server_ammo_table.is_round_chambered_spent then
+                            local most_filled_magazine_index: string
+                            local magazine_count = (function()
+                                local count = 0
+                                for i: string, mag: number in server_ammo_table.loose_magazines do
+                                    count += 1
+                                    
+                                    if most_filled_magazine_index then
+                                        if server_ammo_table.loose_magazines[most_filled_magazine_index] < mag then
+                                            most_filled_magazine_index = i
+                                        end
+                                    else
+                                        most_filled_magazine_index = i
+                                    end
+                                end
+
+                                return count
+                            end)
+
+                            if magazine_count > 0 then
+                                -- initiate reload sequence
+                                local next_magazine = most_filled_magazine_index
+                                local current_magazine = server_ammo_table.rounds_in_magazine
+
+                                task.wait(2.5)
+
+                                server_ammo_table.rounds_in_magazine = server_ammo_table.loose_magazines[next_magazine]
+                                server_ammo_table.loose_magazines[next_magazine] = current_magazine
+
+                                client_ammo_table.rounds_in_magazine = server_ammo_table.loose_magazines[next_magazine]
+                                client_ammo_table.loose_magazines[next_magazine] = current_magazine
+                            end
+                        end
+                    end
                 end
-            end
+            end)
         end
     end
 end
@@ -353,16 +391,9 @@ local function onPlayerDied(name, death_position, killer_data, stats_counted)
     local player = players.get(name)
     if player then
         if killer_data["type"] == "monster" then
-            local death_sound_id = SERVER_SOUNDS:selectRandomIDFromCategory("death_monster")
-
-            local death_sound_properties = {
-                id = death_sound_id,
-                volume = 2,
-                speed = 1,
-                max_distance = 20,
-                min_distance = 0,
-                position = death_position,
-            }
+            local death_sound_properties = HORROR_SOUND_PROPERTIES["death_monster"]
+            death_sound_properties["id"] = SERVER_SOUNDS:getRandomSoundID("death_monster")
+            death_sound_properties["position"] = death_position
 
             SERVER_SOUNDS:insertPhysicalSoundToWorkspace(death_sound_properties)
         end
@@ -399,10 +430,7 @@ local function onClientEvent(playerName: string, data: {any | serverEventArgumen
     local playerInstance = players.get(playerName)
     local args = data[1] -- why? idk
 
-    print(playerName, ", args: ", args)
-
     if args.action == "fetchCurrentServerVariables" then
-        print(playerInstance)
         server_module:giveAllServerSharedVariablesToPlayer(playerInstance)
     end
 end
