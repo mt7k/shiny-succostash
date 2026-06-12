@@ -1,4 +1,4 @@
---# Sound IDs Module
+--# Server Sound Module
 local server_sound_module = {}
 
 -- Type Aliases
