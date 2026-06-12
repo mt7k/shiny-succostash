@@ -252,8 +252,6 @@ local function createSoundPart(properties: physicalSoundProperties)
         weld.Parent = part
     end
 
-    part.Parent = get_map_root()
-
     return part
 end
 
@@ -285,9 +283,12 @@ function server_sound_module:insertPhysicalSoundToWorkspace(properties: physical
 
     local sound_length = (sound_instance.TimeLength * 2) / properties.speed
 
+    sound_instance.Parent = sound_part
+    sound_part.Parent = get_map_root()
+
     sound_instance:play()
     debrisAddItem(sound_part, sound_length)
-
+    
     return sound_part, sound_instance
 end
 
@@ -371,23 +372,32 @@ function server_sound_module:createAmbience(ambience_category: string, propertie
         end
     end
 
+    local sound_instance: Sound = createSound(properties)
+    local sound_part: Part
     local finalPosition: Vector3 = Vector3.new()
     if ambience_category:find("ambience") ~= nil then
         finalPosition = find_position_for_ambience()
+        sound_part = createSoundPart(properties)
     elseif ambience_category:find("behind_player") ~= nil then
         finalPosition = find_position_for_sound_behind_player()
+        sound_part = createSoundPart(properties)    
     end
 
     properties.position = finalPosition
 
-    local sound_part: Part = createSoundPart(properties)
-    local sound_instance: Sound = createSound(properties)
-
     local sound_length = (sound_instance.TimeLength * 1.1) / properties.speed
+    if sound_part then
+        sound_part.Position = finalPosition
+        sound_instance.Parent = sound_part
+        sound_part.Parent = get_map_root()
+
+        debrisAddItem(sound_part, sound_length)
+    else
+        sound_instance.Parent = get_map_root()
+        debrisAddItem(sound_instance, sound_length)
+    end
 
     sound_instance:play()
-    debrisAddItem(sound_part, sound_length)
-
     return sound_length
 end
 

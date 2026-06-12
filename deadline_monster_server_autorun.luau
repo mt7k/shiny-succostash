@@ -393,21 +393,24 @@ local function gameLoop()
 end
 
 local function checkSoundTimer(category: string)
-    if ambience_timers[category].timer:expired() then
-        local timeToWait = 0
-        if not ambience_timers[category].primed then
-            timeToWait = SERVER_SOUNDS:createAmbience(category)
+    if ambience_timers[category] then
+        local soundTimer = ambience_timers[category]
+
+        if soundTimer.timer:expired() and soundTimer.primed then
+            soundTimer.primed = false
+
+            local timeToWait = SERVER_SOUNDS:createAmbience(category)
+            local time_range = soundTimer.time_range
+            soundTimer.timer.timeout = math.random(time_range.Min, time_range.Max)
+
             print("playing sound from category", category)
-        else
-            ambience_timers[category].primed = true
+
+            task.wait(timeToWait)
+            
+            soundTimer.timer:reset()
         end
 
-        local time_range = ambience_timers[category].time_range
-        ambience_timers[category].timer.timeout = math.random(time_range.Min, time_range.Max)
-
-        task.wait(timeToWait)
-
-        ambience_timers[category].timer:reset()
+        soundTimer.primed = true
     end
 end
 
