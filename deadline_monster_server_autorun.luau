@@ -19,6 +19,18 @@ type clientEventArguments = {
 type serverEventArguments = {
     action: string,
 }
+type Timer = {
+    new: thread,
+    expire: thread,
+    expired: (boolean),
+    timeout: number,
+    next_time: number
+}
+type TimerSettings = {
+    timer: Timer,
+    time_range: NumberRange,
+    primed: boolean
+}
 
 -- Modules
 local PLAYER_SETUP_CODES = require("deadline_monster_setup_codes.luau")
@@ -36,6 +48,33 @@ local shared_restore_prefix = "RESTORE"
 
 -- Variables
 local player_setup_ignore_list = {} --:: {[string]: {["primary" | "secondary"]: {string}}}
+local ambience_timers = {
+    horror_ambience_blip_timer = {
+        timer = Timer.new(0):: Timer,
+        time_range = NumberRange.new(90, 120),
+        primed = false
+    },
+    physical_horror_ambience_no_loop_timer = {
+        timer = Timer.new(0):: Timer,
+        time_range = NumberRange.new(30, 60),
+        primed = false
+    },
+    physical_horror_blip_behind_player_timer = {
+        timer = Timer.new(0):: Timer,
+        time_range = NumberRange.new(60, 180),
+        primed = false
+    },
+    physical_horror_blip_hovering = {
+        timer = Timer.new(0):: Timer,
+        time_range = NumberRange.new(120, 240),
+        primed = false
+    },
+    physical_horror_ambience_far_away = {
+        timer = Timer.new(0):: Timer,
+        time_range = NumberRange.new(45, 90),
+        primed = false
+    },
+}:: {[string]: TimerSettings}
 
 -- Functions
 -- \\ Server Module
@@ -353,10 +392,50 @@ local function gameLoop()
     end
 end
 
+local function checkSoundTimer(category: string)
+    if ambience_timers[category].timer:expired() then
+        local timeToWait = 0
+        if not ambience_timers[category].primed then
+            timeToWait = SERVER_SOUNDS:createAmbience(category)
+            print("playing sound from category", category)
+        else
+            ambience_timers[category].primed = true
+        end
+
+        local time_range = ambience_timers[category].time_range
+        ambience_timers[category].timer.timeout = math.random(time_range.Min, time_range.Max)
+
+        task.wait(timeToWait)
+
+        ambience_timers[category].timer:reset()
+    end
+end
+
+local function ambienceLoop()
+    while server_module:getServerSharedVariable("isAmbienceActive") do
+        for category: string, _ in ambience_timers do
+            checkSoundTimer(category)
+        end
+
+        task.wait(1)
+    end
+end
+
 function gameplay_module.startGameLoop()
     if not server_module:getServerSharedVariable("isGameActive") then
         server_module:setServerSharedVariable("isGameActive", true)
         gameLoop()
+    end
+end
+
+function gameplay_module.attemptToEndAmbienceLoop()
+    server_module:setServerSharedVariable("isAmbienceActive", false)
+end
+
+function gameplay_module.startAmbienceLoop()
+    if not server_module:getServerSharedVariable("isAmbienceActive") then
+        server_module:setServerSharedVariable("isAmbienceActive", true)
+        ambienceLoop()
     end
 end
 
@@ -497,8 +576,6 @@ sharedvars.voxel_bullet_destruction_radius = 1
 -- \\ Custom Server Variables
 server_module:setServerSharedVariable("monsterShieldsEnabled", true)
 server_module:setServerSharedVariable("isGameActive", false)
--- \\ Game Initiation
-GameLoopStartingVariableChanges()
 
 -- Preload server audios
 SERVER_SOUNDS:preloadAllAudio()
@@ -507,8 +584,9 @@ SERVER_SOUNDS:preloadAllAudio()
 -- \\ Spawn Entities
 task.spawn(createEntities)
 
--- \\ Gameplay Loop
+-- \\ Runtime Loops
 task.spawn(gameplay_module.startGameLoop)
+task.spawn(gameplay_module.startAmbienceLoop)
 
 -- Events
 -- \\ Run on_player_joined on players that are in the game before this autorun executes

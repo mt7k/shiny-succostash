@@ -387,6 +387,8 @@ function server_sound_module:createAmbience(ambience_category: string, propertie
 
     sound_instance:play()
     debrisAddItem(sound_part, sound_length)
+
+    return sound_length
 end
 
 function server_sound_module:getPhysicalSoundPropertyTables()
