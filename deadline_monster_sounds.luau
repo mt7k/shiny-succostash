@@ -1,4 +1,3 @@
-local Players = game:GetService("Players")
 --# Sound IDs Module
 local server_sound_module = {}
 
