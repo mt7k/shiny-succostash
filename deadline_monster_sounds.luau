@@ -61,8 +61,6 @@ local IDs = {
         1104659813,
         72420282821989,
         105519980274696,
-        77519939114972,
-        7768888198,
     },
     painful_scream = {
         91948204995130,
@@ -368,16 +366,20 @@ local function find_position_for_sound_behind_player(): Vector3
     local finalPosition: Vector3
     local hauntedPlayer: luauInstance = getRandomAlivePlayer()
 
-    local camera_cframe: CFrame
-    if not last_player_pivots[hauntedPlayer.name] then
-        local pivot: snapshotPlayerPivots = get_last_player_pivot()
-        if pivot then
-            camera_cframe = pivot.camera_cframe
+    if hauntedPlayer then
+        local camera_cframe: CFrame
+        if not last_player_pivots[hauntedPlayer.name] then
+            local pivot: snapshotPlayerPivots = get_last_player_pivot(hauntedPlayer)
+            if pivot then
+                camera_cframe = pivot.camera_cframe
+            end
         end
-    end
 
-    local distance = math.random(HORROR_SOUND_RADIUS_RANGES["behind_player"].Min, HORROR_SOUND_RADIUS_RANGES["behind_player"].Max)
-    finalPosition = hauntedPlayer.get_position() + camera_cframe.LookVector * distance
+        local distance = math.random(HORROR_SOUND_RADIUS_RANGES["behind_player"].Min, HORROR_SOUND_RADIUS_RANGES["behind_player"].Max)
+        finalPosition = hauntedPlayer.get_position() + camera_cframe.LookVector * distance
+    else
+        finalPosition = Vector3.new()
+    end
 
     return finalPosition
 end
