@@ -49,12 +49,12 @@ local shared_restore_prefix = "RESTORE"
 -- Variables
 local player_setup_ignore_list = {} --:: {[string]: {["primary" | "secondary"]: {string}}}
 local ambience_timers = {
-    horror_ambience_blip_timer = {
+    horror_ambience_blip = {
         timer = Timer.new(0):: Timer,
         time_range = NumberRange.new(90, 120),
         primed = false
     },
-    physical_horror_ambience_no_loop_timer = {
+    physical_horror_ambience_no_loop = {
         timer = Timer.new(0):: Timer,
         time_range = NumberRange.new(30, 60),
         primed = false
@@ -398,7 +398,7 @@ local function checkSoundTimer(category: string)
 
         if soundTimer.timer:expired() and soundTimer.primed then
             soundTimer.primed = false
-            
+
             local timeToWait = SERVER_SOUNDS:createAmbience(category)
             local time_range = soundTimer.time_range
             soundTimer.timer.timeout = math.random(time_range.Min, time_range.Max)
