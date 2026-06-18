@@ -320,12 +320,16 @@ end
 local function find_position_for_ambience(): Vector3
     local finalPosition: Vector3
     local hauntedPlayer: luauInstance = getRandomAlivePlayer()
-    
-    local x_coefficient, z_coefficient = math.random(-1, 1) > 0 and 1 or -1, math.random(-1, 1) > 0 and 1 or -1
-    local rand_x = x_coefficient * math.random(HORROR_SOUND_RADIUS_RANGES["ambience"].Min, HORROR_SOUND_RADIUS_RANGES["ambience"].Max)
-    local rand_z = z_coefficient * math.random(HORROR_SOUND_RADIUS_RANGES["ambience"].Min, HORROR_SOUND_RADIUS_RANGES["ambience"].Max)
 
-    finalPosition = hauntedPlayer.get_position() + Vector3.new(rand_x, rand_z)
+    if hauntedPlayer then
+        local x_coefficient, z_coefficient = math.random(-1, 1) > 0 and 1 or -1, math.random(-1, 1) > 0 and 1 or -1
+        local rand_x = x_coefficient * math.random(HORROR_SOUND_RADIUS_RANGES["ambience"].Min, HORROR_SOUND_RADIUS_RANGES["ambience"].Max)
+        local rand_z = z_coefficient * math.random(HORROR_SOUND_RADIUS_RANGES["ambience"].Min, HORROR_SOUND_RADIUS_RANGES["ambience"].Max)
+
+        finalPosition = hauntedPlayer.get_position() + Vector3.new(rand_x, rand_z)
+    else
+        finalPosition = Vector3.new()
+    end
 
     return finalPosition
 end
