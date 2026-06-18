@@ -59,7 +59,7 @@ local ambience_timers = {
         time_range = NumberRange.new(30, 60),
         primed = false
     },
-    physical_horror_blip_behind_player_timer = {
+    physical_horror_blip_behind_player = {
         timer = Timer.new(0):: Timer,
         time_range = NumberRange.new(60, 180),
         primed = false
