@@ -398,7 +398,7 @@ local function checkSoundTimer(category: string)
 
         if soundTimer.timer:expired() and soundTimer.primed then
             soundTimer.primed = false
-
+            
             local timeToWait = SERVER_SOUNDS:createAmbience(category)
             local time_range = soundTimer.time_range
             soundTimer.timer.timeout = math.random(time_range.Min, time_range.Max)

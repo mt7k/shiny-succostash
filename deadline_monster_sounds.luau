@@ -372,22 +372,24 @@ function server_sound_module:createAmbience(ambience_category: string, propertie
         end
     end
 
+    
+    properties.id = self:getRandomSoundID(ambience_category)
     local sound_instance: Sound = createSound(properties)
-    local sound_part: Part
     local finalPosition: Vector3 = Vector3.new()
+    local createThePart = false
     if ambience_category:find("ambience") ~= nil then
+        createThePart = true
         finalPosition = find_position_for_ambience()
-        sound_part = createSoundPart(properties)
     elseif ambience_category:find("behind_player") ~= nil then
+        createThePart = true
         finalPosition = find_position_for_sound_behind_player()
-        sound_part = createSoundPart(properties)    
     end
 
-    properties.position = finalPosition
-
     local sound_length = (sound_instance.TimeLength * 1.1) / properties.speed
-    if sound_part then
-        sound_part.Position = finalPosition
+    if createThePart then
+        properties.position = finalPosition
+        
+        local sound_part = createSoundPart(properties)
         sound_instance.Parent = sound_part
         sound_part.Parent = get_map_root()
 

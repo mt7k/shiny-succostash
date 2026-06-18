@@ -18,6 +18,13 @@ local SETUPS = {
             SetupCode = "df74-0252-zbm4-80mg-0bf9-fm7n-2g85-q9fd"
         },
         -- Nogunlimits
+        -- save these
+        {
+            Name = "HK417",
+            WeaponCode = "KF416",
+            SetupCode = "0f0e-0252-goqb-e9qq-mgo9-17g6-gz7z-69d6"
+        },
+        -- saved stuff below
         {
             Name = "AK-102",
             WeaponCode = "AK_545",
