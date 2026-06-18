@@ -46,16 +46,23 @@ local IDs = {
     },
     physical_horror_blip_behind_player = {
         119222436395249,
-
+        126891195816876,
+        140472517784976,
+        127259027005994,
+        128788885488982,
     },
     physical_horror_blip_hovering = {
         94419645391952,
+        115941707214743,
+        135618935486671,
     },
     physical_horror_ambience_far_away = {
         112720265172389,
         1104659813,
         72420282821989,
         105519980274696,
+        77519939114972,
+        7768888198,
     },
     painful_scream = {
         91948204995130,
@@ -97,7 +104,7 @@ local HORROR_SOUND_PROPERTIES: {physicalSoundProperties} = {
         min_distance = 2 * HORROR_SOUND_RADIUS_RANGES["ambience"].Min,
     },
     physical_horror_blip_behind_player = {
-        volume = 0.25,
+        volume = 0.5,
         speed = 1,
         max_distance = HORROR_SOUND_RADIUS_RANGES["behind_player"].Max,
         min_distance = HORROR_SOUND_RADIUS_RANGES["behind_player"].Min,
@@ -109,7 +116,7 @@ local HORROR_SOUND_PROPERTIES: {physicalSoundProperties} = {
         min_distance = HORROR_SOUND_RADIUS_RANGES["behind_player"].Min,
     },
     physical_horror_ambience_far_away = {
-        volume = 0.75,
+        volume = 0.5,
         speed = 1,
         max_distance = 10 * HORROR_SOUND_RADIUS_RANGES["ambience"].Max,
         min_distance = 75 * HORROR_SOUND_RADIUS_RANGES["ambience"].Min,
