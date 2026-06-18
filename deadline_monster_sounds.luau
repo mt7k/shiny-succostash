@@ -297,21 +297,24 @@ function server_sound_module:insertPhysicalSoundToWorkspace(properties: physical
 end
 
 local function getRandomAlivePlayer()
+    local hauntedPlayer: luauInstance
     local plrs = players.get_all()
-    local random_index = math.random(1, #plrs)
-    local hauntedPlayer: luauInstance = plrs[random_index]
-    local random_threshold = 30
+    if plrs and #plrs > 0 then
+        local random_index = math.random(1, #plrs)
+        hauntedPlayer = plrs[random_index]
+        local random_threshold = 30
 
-    if not hauntedPlayer.is_alive() then
-        repeat
-            random_index = math.random(1, #plrs)
-            hauntedPlayer = plrs[random_index]
-            if not hauntedPlayer.is_alive() then
-                hauntedPlayer = nil
-            end
+        if not hauntedPlayer.is_alive() then
+            repeat
+                random_index = math.random(1, #plrs)
+                hauntedPlayer = plrs[random_index]
+                if not hauntedPlayer.is_alive() then
+                    hauntedPlayer = nil
+                end
 
-            random_threshold -= 1
-        until random_threshold == 0 or hauntedPlayer ~= nil
+                random_threshold -= 1
+            until random_threshold == 0 or hauntedPlayer ~= nil
+        end
     end
 
     return hauntedPlayer
