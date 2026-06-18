@@ -199,6 +199,7 @@ function server_sound_module:getRandomSoundID(soundCategory: string): (string, s
 
     local soundID = nil
     local t_category = getSoundIgnoreListCategory(soundCategory)
+    print("category", soundCategory.. "-> t_category:", t_category)
     local random_number = math.random(1, #t_category)
     local chosenID = t_category[random_number]
     
@@ -388,7 +389,7 @@ function server_sound_module:createAmbience(ambience_category: string, propertie
     local sound_length = (sound_instance.TimeLength * 1.1) / properties.speed
     if createThePart then
         properties.position = finalPosition
-        
+
         local sound_part = createSoundPart(properties)
         sound_instance.Parent = sound_part
         sound_part.Parent = get_map_root()
