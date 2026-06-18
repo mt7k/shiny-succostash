@@ -417,7 +417,7 @@ end
 local function ambienceLoop()
     while server_module:getServerSharedVariable("isAmbienceActive") do
         for category: string, _ in ambience_timers do
-            checkSoundTimer(category)
+            task.spawn(checkSoundTimer, category)
         end
 
         task.wait(1)
