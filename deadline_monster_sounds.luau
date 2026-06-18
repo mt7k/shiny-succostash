@@ -198,12 +198,15 @@ function server_sound_module:getRandomSoundID(soundCategory: string): (string, s
     soundCategory = soundCategory:lower()
 
     local soundID = nil
-    local t_category = getSoundIgnoreListCategory(soundCategory)
-    print("category", soundCategory.. "-> t_category:", t_category)
+    local t_category = IDs[soundCategory]
+    local t_ignore = getSoundIgnoreListCategory(soundCategory)
+
+    print("category", soundCategory.. "-> t_category:", t_category, #t_category)
+    print("category ignore", soundCategory.. "-> t_ignore:", t_ignore, #t_ignore)
+
     local random_number = math.random(1, #t_category)
     local chosenID = t_category[random_number]
-    
-    if #t_category >= #IDs[soundCategory] then
+    if #t_ignore >= #t_category then
         resetSoundIgnoreList(soundCategory)
     end
 
