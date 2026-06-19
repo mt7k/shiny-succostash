@@ -57,10 +57,10 @@ local IDs = {
         135618935486671,
     },
     physical_horror_ambience_far_away = {
-        112720265172389,
+        88784462446827,
         1104659813,
         72420282821989,
-        105519980274696,
+        133955573194661,
     },
     painful_scream = {
         91948204995130,
@@ -376,7 +376,11 @@ local function find_position_for_sound_behind_player(): Vector3
         end
 
         local distance = math.random(HORROR_SOUND_RADIUS_RANGES["behind_player"].Min, HORROR_SOUND_RADIUS_RANGES["behind_player"].Max)
-        finalPosition = hauntedPlayer.get_position() + camera_cframe.LookVector * distance
+        if camera_cframe then
+            finalPosition = hauntedPlayer.get_position() + camera_cframe.LookVector * distance
+        else
+            finalPosition = hauntedPlayer.get_position() + Vector3.new(math.random(), 0, math.random())
+        end
     else
         finalPosition = Vector3.new()
     end
