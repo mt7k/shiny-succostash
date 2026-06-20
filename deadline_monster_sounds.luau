@@ -29,50 +29,49 @@ type snapshotPlayerPivots = {
 -- Constants
 local IDs = {
     slowed_horror_ambience_loop = {
-        8601687897
+        8601687897 -- Seamless Waterfall Sound effect Underwater [FIXED]
     },
     horror_ambience_blip = {
-        86235856688933,
-        114339702267384,
+        86235856688933, -- Scary Noise
     },
     physical_horror_ambience_no_loop = {
-        9112775414,
-        9112795463,
-        9112795583,
-        138347177735590,
-        1840844303,
-        130812982962354,
+        9112775414, -- Eerie Ambience 2 (SFX)
+        9112795463, -- Hollow Rumble 1 (SFX)
+        9112795583, -- Hollow Rumble 3 (SFX)
+        138347177735590, -- Radio Static Sound
+        1840844303, -- Suspended State
+        130812982962354, -- AUDIO ROOM
     },
     physical_horror_blip_behind_player = {
-        119222436395249,
-        126891195816876,
-        140472517784976,
-        127259027005994,
-        107688529939258,
+        119222436395249, -- look behind you echo
+        126891195816876, -- sfx_4_slide_05
+        140472517784976, -- Run Thump 01
+        127259027005994, -- thump sound
+        107688529939258, -- Short Static (?)
     },
     physical_horror_blip_hovering = {
-        94419645391952,
-        73249221201988,
-        135618935486671,
+        94419645391952, -- Why is this a thing?
+        73249221201988, -- Another Static
+        135618935486671, -- [NieR Automata] Damage SFX [on-hit to low-HP]
     },
     physical_horror_ambience_far_away = {
-        88784462446827,
-        1104659813,
-        72420282821989,
-        133955573194661,
+        88784462446827, -- horror ambience
+        1104659813, -- RageGhost_3
+        72420282821989, -- Fire_Cry
+        133955573194661, -- creepy-ghost-scream
     },
     painful_scream = {
-        91948204995130,
-        79393083436423,
-        137835939293260,
-        81157569915784,
+        91948204995130, -- male painful scream
+        79393083436423, -- m_charged1
+        137835939293260, -- Gnarlyscream1
+        81157569915784, -- Gnarlyscream2
     },
     death_monster = {
-        9114542183,
-        9113540587,
-        9113540935,
-        9119558965,
-        9113542948,
+        9114542183, -- Fruit Vegetable Impacts 5 (SFX)
+        9113540587, -- Bone Cracks 2 (SFX)
+        9113540935, -- Bone Cracks 2 (SFX) \\ not a duplicate i swear
+        9119558965, -- Squishy Bone Cracks 2 (SFX)
+        9113542948, -- Bone Cracks 26 (SFX)
     }
 }
 local HORROR_SOUND_RADIUS_RANGES = {
