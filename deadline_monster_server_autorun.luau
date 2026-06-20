@@ -397,18 +397,19 @@ local function checkSoundTimer(category: string)
         local soundTimer = ambience_timers[category]
 
         if soundTimer.timer:expired() == true and soundTimer.primed == true then
-            soundTimer.primed = false
+            ambience_timers[category].primed = false
 
             local timeToWait = SERVER_SOUNDS:createAmbience(category)
+            print("playing", category, "for", timeToWait, "seconds")
             local time_range = soundTimer.time_range
-            soundTimer.timer.timeout = math.random(time_range.Min, time_range.Max)
+            ambience_timers[category].timer.timeout = math.random(time_range.Min, time_range.Max)
 
             task.wait(timeToWait)
             
-            soundTimer.timer:reset()
+            ambience_timers[category].timer:reset()
         end
 
-        soundTimer.primed = true
+        ambience_timers[category].primed = true
     end
 end
 

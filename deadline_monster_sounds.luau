@@ -36,7 +36,6 @@ local IDs = {
         114339702267384,
     },
     physical_horror_ambience_no_loop = {
-        9114228832,
         9112775414,
         9112795463,
         9112795583,
@@ -205,9 +204,6 @@ function server_sound_module:getRandomSoundID(soundCategory: string): (string, s
     local soundID = nil
     local t_category = IDs[soundCategory]
     local t_ignore = getSoundIgnoreListCategory(soundCategory)
-
-    print("category", soundCategory.. "-> t_category:", t_category, #t_category)
-    print("category ignore", soundCategory.. "-> t_ignore:", t_ignore, #t_ignore)
 
     local random_number = math.random(1, #t_category)
     local chosenID = t_category[random_number]
