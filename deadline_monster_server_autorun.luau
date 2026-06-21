@@ -405,11 +405,6 @@ end
 local function checkSoundTimer(category: string)
     if ambience_timers[category] then
         local soundTimer = ambience_timers[category]
-        if category == "physical_horror_ambience_far_away" then
-            print("----------------\ncategory:", category)
-            print(ambience_timers[category], "\nexpired =", soundTimer.timer:expired(), "\nprimed =", soundTimer.primed)
-        end
-        
         if soundTimer.primed == nil then
             resetSoundTimer(category)
         elseif soundTimer.timer:expired() and soundTimer.primed == true then
@@ -427,7 +422,6 @@ local function ambienceLoop()
         for category: string, _ in ambience_timers do
             task.spawn(checkSoundTimer, category)
         end
-        print("end of ambience loop\n------------------------------------")
 
         task.wait(2)
     end
@@ -435,7 +429,7 @@ end
 
 function gameplay_module.startGameLoop()
     if not server_module:getServerSharedVariable("isGameActive") then
-        print('starting game loop')
+        warn('starting game loop')
         server_module:setServerSharedVariable("isGameActive", true)
         gameLoop()
     end
@@ -447,7 +441,7 @@ end
 
 function gameplay_module.startAmbienceLoop()
     if not server_module:getServerSharedVariable("isAmbienceActive") then
-        print("starting ambience loop")
+        warn("starting ambience loop")
         server_module:setServerSharedVariable("isAmbienceActive", true)
         ambienceLoop()
     end

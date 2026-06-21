@@ -225,26 +225,32 @@ end
 -- Updates the AMD position
 local function AMS_update(delta_time)
     if framework.character.is_alive() then
-        local root_position: Vector3 = framework.character.get_position()
-        local new_model_cframe: CFrame = CFrame.new(root_position)
+        if shared["sv_monsterShieldsEnabled"] == true then
+            local root_position: Vector3 = framework.character.get_position()
+            local new_model_cframe: CFrame = CFrame.new(root_position)
 
-        if anti_monster_model then
-            anti_monster_model.pivot_to(new_model_cframe)
-        else
-            warn("anti_monster_model = nil")
+            if anti_monster_model then
+                anti_monster_model.pivot_to(new_model_cframe)
+            else
+                warn("anti_monster_model = nil")
+            end
         end
     end
 end
 
 local function setupShieldIfNeeded()
-    if anti_monster_model == nil then
-        warn("adding shield")
-        client_module:createNewShieldModel()
-    end
+    if shared["sv_monsterShieldsEnabled"] == true then
+        if anti_monster_model == nil then
+            warn("adding shield")
+            client_module:createNewShieldModel()
+        end
 
-    if amd_connection == nil then
-        warn("adding shield connection")
-        amd_connection = time.renderstep("AMS_update", AMS_update)
+        if amd_connection == nil then
+            warn("adding shield connection")
+            amd_connection = time.renderstep("AMS_update", AMS_update)
+        end
+    else
+        warn("stop trying to create a shield when sv_monsterShieldsEnabled is not true")
     end
 end
 
