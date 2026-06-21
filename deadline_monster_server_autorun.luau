@@ -423,6 +423,7 @@ local function ambienceLoop()
         for category: string, _ in ambience_timers do
             task.spawn(checkSoundTimer, category)
         end
+        print("end of ambience loop\n------------------------------------")
 
         task.wait(2)
     end
