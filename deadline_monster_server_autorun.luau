@@ -400,7 +400,9 @@ local function checkSoundTimer(category: string)
             print(ambience_timers[category], "\nexpired =", soundTimer.timer:expired(), "\nprimed =", soundTimer.primed)
         end
         
-        if soundTimer.timer:expired() and soundTimer.primed == true then
+        if soundTimer.primed == false then
+            ambience_timers[category].primed = true
+        elseif soundTimer.timer:expired() and soundTimer.primed == true then
             soundTimer.timer:expire()
             ambience_timers[category].primed = false
 
@@ -424,9 +426,10 @@ local function checkSoundTimer(category: string)
             end
             
             ambience_timers[category].timer:reset()
+            ambience_timers[category].primed = true
         end
 
-        ambience_timers[category].primed = true
+        
     end
 end
 
