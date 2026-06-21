@@ -396,6 +396,7 @@ local function checkSoundTimer(category: string)
     if ambience_timers[category] then
         local soundTimer = ambience_timers[category]
 
+        print("----------------\ncategory:", category)
         print(ambience_timers[category], "\nexpired =", soundTimer.timer:expired(), "\nprimed =", soundTimer.primed)
         if soundTimer.timer:expired() == true and soundTimer.primed == true then
             ambience_timers[category].primed = false
