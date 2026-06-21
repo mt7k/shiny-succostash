@@ -36,7 +36,7 @@ config.settings_layout.custom = {
 local function getServerSharedVariable(name: string)
     local sv_name = "sv_".. name
     local return_value = shared[sv_name]
-    if not return_value then
+    if return_value == nil then
         warn("getServerSharedVariable: server variable \"".. name.. "\" was not found")
     end
     
