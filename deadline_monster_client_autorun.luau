@@ -3,17 +3,38 @@ local client_module = {}
 local gui_module = {}
 local navigation_module = {}
 
+-- Type Aliases
+type luauInstance = {}
+type clientEventArguments = {
+    action: string,
+}
+type serverEventArguments = {
+    action: string,
+}
+type Signal = {
+
+}
 -- Constants
-local AMS_DISTANCE = 7.5
 local SWITCH_SOUNDS = false :: boolean
 local ONLY_SWAP_VALID_SOUNDS = false :: boolean
 
 -- Variables
-local anti_monster_device: Part
+local anti_monster_model: Model
 local renderstep_connection: RBXScriptConnection
 local amd_connection: RBXScriptConnection
+local svChangedSignal: Signal = Signal.new()
 
 -- Methods
+local function getServerSharedVariable(name: string)
+    local sv_name = "sv_".. name
+    local return_value = shared[sv_name]
+    if return_value == nil then
+        warn("getServerSharedVariable: server variable \"".. name.. "\" was not found")
+    end
+    
+    return shared[sv_name]
+end
+
 -- \\ navigation_module Methods
 local function __isChildOfRestrictedFolder(instanceToLook)
     local isNotAChildOfWorkspace, _result = pcall(function(thisInstance)
@@ -49,7 +70,16 @@ end
 -- \\ gui_module Methods
 function gui_module.draw()
     iris:Connect(function()
-        local gunInfoWindow = iris.Window({"GUN_INFORMATION"})
+        iris.Window({
+            [Iris.Args.Window.Title] = "GUN_INFORMATION",
+            [Iris.Args.Window.NoTitleBar] = true,
+            [Iris.Args.Window.NoBackground] = true,
+            [Iris.Args.Window.NoCollapse] = true,
+            [Iris.Args.Window.NoClose] = true,
+            [Iris.Args.Window.NoMove] = true,
+            [Iris.Args.Window.NoScrollbar] = true,
+            [Iris.Args.Window.NoResize] = true,
+        })
             iris.Text({"GUN_INFO_NAME"})
         iris.End()
     end)
@@ -71,7 +101,7 @@ function client_module:replace_gun_sounds(destination: string, target: string, s
             local original_target_sound = value
             local original_dest_sound = config.gunshots[original_destination_sound_name]
 
-            local is_dest_sound_valid = ONLY_SWAP_VALID_SOUNDS and original_dest_sound ~= nil or true
+            local is_dest_sound_valid = ONLY_SWAP_VALID_SOUNDS == true and original_dest_sound ~= nil or true
             if is_dest_sound_valid then
                 if SWITCH_SOUNDS then
                     config.gunshots[name] = original_dest_sound
@@ -91,71 +121,135 @@ end
 
 -- Creates a transparent shield that gives players a way to directly look at the monster without it disappearing
 -- and lets players approach the monster (as long as the shield covers them)
-function client_module:createNewShield(): Part
-    local ams: Part = create_instance("Part")
-    ams.Name = "Anti-Monster Shield"
-    ams.Transparency = 0
-    ams.Material = Enum.Material.ForceField
-    ams.Color = Color3.fromRGB(255, 255, 255)
-    ams.CastShadow = false
-    ams.Anchored = true
-    ams.CanCollide = false
-    ams.CanQuery = true -- This needs to be enabled
-    ams.CanTouch = false
-    ams.CollisionGroup = "wall"
+function client_module:createNewShieldModel()
+    if anti_monster_model then
+        anti_monster_model.destroy()
+    end
 
-    -- Flat Shield
-    ams.Shape = Enum.PartType.Block
-    ams.Size = Vector3.new(75, 75, 0.125)
+    local panel_thickness = 0.125
+    local panel_diameter = 10
+    local panel_adjusted_width = panel_diameter + panel_thickness
+    local panel_adjusted_radius = (panel_diameter / 2) - panel_thickness
 
-    --[[ Spherical Shield 
-        ams.Shape = Enum.PartType.Ball
-        ams.Size = Vector3.new(15, 15, 15)
-    ]]
-
-    ams.Parent = get_map_root() -- navigation_module:getIgnoreFolderUsingTaggedChildren()
+    local ams_parts = {}:: {[string]: Part}
+    local front_panel: Part
+    local back_panel: Part
+    local top_panel: Part
+    local bottom_panel: Part
+    local left_panel: Part
+    local right_panel: Part
     
-    return ams
+    local ams: Model = create_instance("Model")
+    ams.Name = "Anti-Monster Shield Model"
+
+    for i = 1, 6, 1 do
+        local shield_part: Part = create_instance("Part")
+        ams_parts[i] = shield_part
+
+        shield_part.Name = "Anti-Monster Shield Panel"
+        shield_part.CollisionGroup = "wall"
+        shield_part.Transparency = 0
+        shield_part.Material = Enum.Material.ForceField
+        shield_part.Shape = Enum.PartType.Block
+        shield_part.Position = Vector3.new()
+        shield_part.Size = Vector3.new(panel_adjusted_width, panel_adjusted_width, panel_thickness)
+        shield_part.Color = Color3.fromRGB(255, 255, 255)
+        shield_part.CastShadow = false
+        shield_part.Anchored = true
+        shield_part.CanCollide = false
+        shield_part.CanQuery = true -- This needs to be enabled
+        shield_part.CanTouch = false
+    end
+
+    front_panel = ams_parts[1]
+    front_panel.Name = front_panel.Name.. " (Front)"
+    front_panel.Orientation = Vector3.new(0, 0, 0)
+    front_panel.Position = front_panel.CFrame.LookVector * panel_adjusted_radius
+
+    back_panel = ams_parts[2]
+    back_panel.Name = back_panel.Name.. " (Back)"
+    back_panel.Orientation = Vector3.new(180, 0, 180)
+    back_panel.Position = back_panel.CFrame.LookVector * panel_adjusted_radius
+
+    top_panel = ams_parts[3]
+    top_panel.Name = top_panel.Name.. " (Top)"
+    top_panel.Orientation = Vector3.new(90, 0, 0)
+    top_panel.Position = top_panel.CFrame.LookVector * panel_adjusted_radius
+
+    bottom_panel = ams_parts[4]
+    bottom_panel.Name = bottom_panel.Name.. " (Bottom)"
+    bottom_panel.Orientation = Vector3.new(-90, 0, 0)
+    bottom_panel.Position = bottom_panel.CFrame.LookVector * panel_adjusted_radius
+
+    left_panel = ams_parts[5]
+    left_panel.Name = left_panel.Name.. " (Left)"
+    left_panel.Orientation = Vector3.new(0, 90, 0)
+    left_panel.Position = left_panel.CFrame.LookVector * panel_adjusted_radius
+
+    right_panel = ams_parts[6]
+    right_panel.Name = right_panel.Name.. " (Right)"
+    right_panel.Orientation = Vector3.new(0, -90, 0)
+    right_panel.Position = right_panel.CFrame.LookVector * panel_adjusted_radius
+
+    for _, part: Part in ams_parts do
+        part.Parent = ams
+    end
+
+    local model_primary: Part = create_instance("Part")
+    model_primary.Name = "primary"
+    model_primary.CollisionGroup = "wall"
+    model_primary.Transparency = 1
+    model_primary.Position = Vector3.new()
+    model_primary.Size = Vector3.new(0.5, 0.5, 0.5)
+    model_primary.CastShadow = false
+    model_primary.Anchored = true
+    model_primary.CanCollide = false
+    model_primary.CanQuery = false -- This needs to be enabled
+    model_primary.CanTouch = false
+    model_primary.Parent = ams
+    
+    -- ams.PrimaryPart = model_primary
+    ams.Parent = get_map_root() -- navigation_module:getIgnoreFolderUsingTaggedChildren()
+    anti_monster_model = ams
 end
 
 -- Renderstep function for the AMS_update renderstep loop
 -- Updates the AMD position
 local function AMS_update(delta_time)
     if framework.character.is_alive() then
-        if anti_monster_device ~= nil then
-            local camera_cframe: CFrame = framework.character.get_camera_cframe()
-            local amd_new_cframe: CFrame = camera_cframe + camera_cframe.LookVector * AMS_DISTANCE
-            local amd_new_position: Vector3 = amd_new_cframe.Position
-            local amd_ori_rx, amd_ori_ry, amd_ori_rz: number = amd_new_cframe:ToOrientation()
-            local amd_ori_dx, amd_ori_dy, amd_ori_dz: number = math.deg(amd_ori_rx), math.deg(amd_ori_ry), math.deg(amd_ori_rz)
-            local amd_new_ori: Vector3 = Vector3.new(amd_ori_dx, amd_ori_dy, amd_ori_dz)
+        if shared["sv_monsterShieldsEnabled"] == true then
+            local root_position: Vector3 = framework.character.get_position()
+            local new_model_cframe: CFrame = CFrame.new(root_position)
 
-            anti_monster_device.Position = amd_new_position
-            anti_monster_device.Orientation = amd_new_ori
-
-            --[[ Spherical Shield
-                local camera_cframe: CFrame = framework.character.get_camera_cframe()
-                local amd_new_cframe: CFrame = camera_cframe
-                local amd_new_position: Vector3 = amd_new_cframe.Position
-
-                anti_monster_device.Position = amd_new_position
-            ]]
+            if anti_monster_model then
+                anti_monster_model.pivot_to(new_model_cframe)
+            else
+                warn("anti_monster_model = nil")
+            end
         end
     end
 end
 
---  Method for the framework.on_spawned event
-function client_module.on_spawned()
-    print("spawned")
-    anti_monster_device = client_module:createNewShield()
-    amd_connection = time.renderstep("AMS_update", AMS_update)
+local function setupShieldIfNeeded()
+    if getServerSharedVariable("monsterShieldsEnabled") == true and framework.character.is_alive() then
+        if anti_monster_model == nil then
+            warn("adding shield")
+            client_module:createNewShieldModel()
+        end
+
+        if amd_connection == nil then
+            warn("adding shield connection")
+            amd_connection = time.renderstep("AMS_update", AMS_update)
+        end
+    else
+        warn("stop trying to create a shield when sv_monsterShieldsEnabled is not true")
+    end
 end
 
---  Method for the framework.on_died event
-function client_module.on_died()
-    print("died")
-    if anti_monster_device ~= nil then
-        anti_monster_device.destroy()
+local function disableShieldIfNeeded()
+    if anti_monster_model ~= nil then
+        anti_monster_model.destroy()
+        anti_monster_model = nil
     end
 
     if amd_connection ~= nil then
@@ -164,16 +258,70 @@ function client_module.on_died()
     end
 end
 
-local function renderstepFunction(delta_time)
-    -- UI stuff
-    if framework.character.is_alive() then
-        gui_module.draw()
-    -- else
-        -- ui for when the character is despawned
+local function fetchCurrentServerVariables()
+    local event_args = { action = "fetchCurrentServerVariables" }
+    fire_server(event_args)
+end
+
+--  Method for the framework.on_spawned event
+function client_module.on_spawned()
+    fetchCurrentServerVariables()
+    if getServerSharedVariable("monsterShieldsEnabled") == true then
+        setupShieldIfNeeded()
+    end
+
+    -- gui_module.draw()
+end
+
+--  Method for the framework.on_died event
+function client_module.on_died()
+    disableShieldIfNeeded()
+end
+
+local function svChanged(args: table)
+    if args.name == "monsterShieldsEnabled" then
+        if args.old ~= args.new then
+            if args.new == true then
+                setupShieldIfNeeded()
+            elseif args.new == false then
+                disableShieldIfNeeded()
+            end
+        end
+    end
+end
+
+local function onServerEvent(data: {any | clientEventArguments?})
+    local args = data[1] -- why? idk
+
+    if args.action == "setServerSharedVariable" then
+        local index = "sv_".. args.sv_name
+        local old_value = shared[index]
+        shared[index] = args.sv_value
+
+        svChangedSignal:Fire({
+            name = args.sv_name,
+            old = old_value,
+            new = args.sv_value
+        })
+    elseif args.action == "setServerSharedVariable" then
+        local camera_cframe = framework.character.get_camera_cframe()
+        local character_position = framework.character.get_position()
+        local event_args = {
+            action = "giveSnapshotPlayerPivot",
+            snapshot = {
+                camera_cframe = camera_cframe,
+                char_position = character_position
+            }
+        }
+
+        fire_server(event_args)
     end
 end
 
 -- Runtime
+-- Get server variables
+fetchCurrentServerVariables()
+
 -- \\ Replace/Swap Gun Sounds
 client_module:replace_gun_sounds("QBZ", "AK308", false)
 client_module:replace_gun_sounds("P320", "UMP9", false)
@@ -181,9 +329,15 @@ client_module:replace_gun_sounds("HK416", "M4A1", false)
 client_module:replace_gun_sounds("AK_762", "FAL", false)
 
 -- \\ Connect Events
-renderstep_connection = time.renderstep("Monster Client Renderstep", renderstepFunction)
+-- \\\\ Signals
+svChangedSignal:Connect(svChanged)
+
+-- \\\\ Game Events
 framework.on_spawned:Connect(client_module.on_spawned)
 framework.on_died:Connect(client_module.on_died)
+
+-- \\\\ Server Events
+on_server_event:Connect(onServerEvent)
 
 shared["client_module"] = client_module
 shared["gui_module"] = gui_module

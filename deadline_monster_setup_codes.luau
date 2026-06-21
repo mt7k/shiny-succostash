@@ -2,21 +2,33 @@
 local SETUPS = {
     primary = {
         -- Gunlimits
-        --[[{
-            Name = "Example Weapon",
-            WeaponCode = "M4A1",
-            SetupCode = "4o7n-0252-dhen-23g4-2c87-cmm8-h112-8fg5"
-        },]]
-        -- Nogunlimits
         {
-            Name = "LSW-556",
-            WeaponCode = "SA58",
-            SetupCode = "4o7n-0252-dhen-23g4-2c87-cmm8-h112-8fg5"
+            Name = "HK416",
+            WeaponCode = "KF416",
+            SetupCode = "h945-0252-fde0-ag3h-0ddz-qmo1-b5cm-cbnm"
         },
+        {
+            Name = "MK16",
+            WeaponCode = "SCARL",
+            SetupCode = "o9oa-0252-w69f-0nan-m98q-4fc1-d47q-1g2o"
+        },
+        {
+            Name = "MK17",
+            WeaponCode = "SCARH",
+            SetupCode = "df74-0252-zbm4-80mg-0bf9-fm7n-2g85-q9fd"
+        },
+        -- Nogunlimits
+        -- save these
+        {
+            Name = "HK417",
+            WeaponCode = "KF416",
+            SetupCode = "0f0e-0252-goqb-e9qq-mgo9-17g6-gz7z-69d6"
+        },
+        -- saved stuff below
         {
             Name = "AK-102",
             WeaponCode = "AK_545",
-            SetupCode = "3nh6-0252-6a3e-n81b-bo2c-f8he-q6eb-8ed7"
+            SetupCode = "o1zc-0252-7m1f-9mdd-endh-nnn2-8eea-7g5z" -- normal: 3nh6-0252-6a3e-n81b-bo2c-f8he-q6eb-8ed7
         },
         {
             Name = "AK-104",
@@ -29,14 +41,29 @@ local SETUPS = {
             SetupCode = "4g93-0252-fg76-gz2m-e4g0-09aw-8z32-o5z4"
         },
         {
-            Name = "AK308k-SD",
+            Name = "AK-308k",
             WeaponCode = "AK308",
-            SetupCode = "09q4-0252-d3em-5wzw-4cmm-6w2w-12h5-nbdf"
+            SetupCode = "b86o-0252-ff2n-mw46-4hg8-4c0w-104z-wze3"
+        },
+        {
+            Name = "AUG-762",
+            WeaponCode = "AUG_A3",
+            SetupCode = "60fh-0252-dc8m-qda4-om5z-z1qh-nh93-8n74"
+        },
+        {
+            Name = "F2000",
+            WeaponCode = "M4A1",
+            SetupCode = "g20q-0252-b338-gaz3-eaq2-1meo-g427-327q"
         },
         {
             Name = "HK433",
             WeaponCode = "KF416",
             SetupCode = "22oc-0252-5q19-9geq-915w-nn4f-no3f-43zf"
+        },
+        {
+            Name = "LSW-556",
+            WeaponCode = "SA58",
+            SetupCode = "4o7n-0252-dhen-23g4-2c87-cmm8-h112-8fg5"
         },
         {
             Name = "MCX LVAW",
@@ -49,7 +76,12 @@ local SETUPS = {
             SetupCode = "w74n-0252-f4ac-a7mz-n93c-o2n1-3146-7mg1"
         },
         {
-            Name = "MK18 w/ M203",
+            Name = "Mk18 LSW",
+            WeaponCode = "M4A1",
+            SetupCode = "2c1z-0252-za29-wqz5-4hdw-qfgh-43o7-nf6g"
+        },
+        {
+            Name = "Mk18 w/ M203",
             WeaponCode = "M4A1",
             SetupCode = "hnfd-0252-326e-8589-603c-6zd4-bn6q-eeqa"
         },
@@ -69,9 +101,19 @@ local SETUPS = {
             SetupCode = "a1fz-0252-5gch-3h4b-d1bd-27g3-gaca-0543"
         },
         {
+            Name = "QBZ-192",
+            WeaponCode = "AK_545",
+            SetupCode = "35ez-0252-38c0-3eff-qbd4-8d93-60q1-q3df"
+        },
+        {
             Name = "RFB-308",
             WeaponCode = "QBZ95",
             SetupCode = "2gzw-0252-2chb-02nf-wo3d-m0gg-h7ng-foz9"
+        },
+        {
+            Name = "RPK-15",
+            WeaponCode = "AK308",
+            SetupCode = "ez8c-0252-h01c-g654-aqe0-o40w-abw8-5dg8"
         },
         {
             Name = "RPK-308",
@@ -102,9 +144,29 @@ local SETUPS = {
     secondary = {
         -- Gunlimits
         {
+            Name = "416C",
+            WeaponCode = "KF416",
+            SetupCode = "fnfq-0252-w59b-e4ac-qzd1-b5q2-3hn3-ca4m"
+        },
+        {
+            Name = "AKS-74U",
+            WeaponCode = "AK_545_Carbine",
+            SetupCode = "00ba-0252-goqg-b10o-z760-ogb1-c3oa-9355"
+        },
+        {
             Name = "Short MK9",
             WeaponCode = "MK9",
             SetupCode = "o2d9-0252-0m41-ana8-1n5q-wdb1-4wf0-owa3"
+        },
+        {
+            Name = "MP5",
+            WeaponCode = "MP5",
+            SetupCode = "63a3-0252-1n00-wefo-c13o-oahh-2z8a-1dne"
+        },
+        {
+            Name = "PP-19-01",
+            WeaponCode = "AK_9",
+            SetupCode = "g0qa-0252-7dzn-0mgg-f66d-eo51-w6mo-hgw9"
         },
         -- Nogunlimits
         {
