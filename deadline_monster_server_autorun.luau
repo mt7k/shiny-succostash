@@ -1,5 +1,6 @@
 -- TODOS: finish sv replication
 -- # Server Autorun
+-- shared.server_module:setServerSharedVariable("monsterShieldsEnabled", false)
 local branch = "main"
 if shared.isLoadingPreMainBranch == true then
     branch = "pre-main"

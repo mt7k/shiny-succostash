@@ -11,7 +11,9 @@ type clientEventArguments = {
 type serverEventArguments = {
     action: string,
 }
+type Signal = {
 
+}
 -- Constants
 local SWITCH_SOUNDS = false :: boolean
 local ONLY_SWAP_VALID_SOUNDS = false :: boolean
@@ -20,17 +22,7 @@ local ONLY_SWAP_VALID_SOUNDS = false :: boolean
 local anti_monster_model: Model
 local renderstep_connection: RBXScriptConnection
 local amd_connection: RBXScriptConnection
-local current_custom_keybinds = {
-
-}
-
-config.keybinds.toggle_godmode = table.clone(config.keybinds.move_forward)
-config.keybinds.toggle_godmode.name = "Toggle godmode"
-config.keybinds.toggle_godmode.description = "Toggles godmode"
-config.settings_layout.custom = {
-  { text= "Custom keybinds", type = "text" },
-  { keybind = "toggle_godmode", type = "keybind" }
-}
+local svChangedSignal: Signal = Signal.new()
 
 -- Methods
 local function getServerSharedVariable(name: string)
@@ -239,7 +231,7 @@ local function AMS_update(delta_time)
 end
 
 local function setupShieldIfNeeded()
-    if shared["sv_monsterShieldsEnabled"] == true then
+    if shared["sv_monsterShieldsEnabled"] == true and framework.character.is_alive() then
         if anti_monster_model == nil then
             warn("adding shield")
             client_module:createNewShieldModel()
@@ -281,7 +273,7 @@ function client_module.on_spawned()
 
     fetchCurrentServerVariables()
     if getServerSharedVariable("monsterShieldsEnabled") == true then
-        amd_connection = time.renderstep("AMS_update", AMS_update)
+        setupShieldIfNeeded()
     end
 
     -- gui_module.draw()
@@ -293,16 +285,17 @@ function client_module.on_died()
     disableShieldIfNeeded()
 end
 
-local function renderstepFunction(delta_time)
-    -- UI stuff
-    if framework.character.is_alive() then
-        if getServerSharedVariable("monsterShieldsEnabled") == true then
-            setupShieldIfNeeded()
-        else
-            disableShieldIfNeeded()
+local function svChanged(args: table)
+    local data = args[1]
+
+    if data.name == "monsterShieldsEnabled" then
+        if data.old ~= data.new then
+            if data.new == true then
+                setupShieldIfNeeded()
+            elseif data.new == false then
+                disableShieldIfNeeded()
+            end
         end
-    else
-        disableShieldIfNeeded()
     end
 end
 
@@ -310,8 +303,15 @@ local function onServerEvent(data: {any | clientEventArguments?})
     local args = data[1] -- why? idk
 
     if args.action == "setServerSharedVariable" then
+        local old_value = shared[index]
         local index = "sv_".. args.sv_name
         shared[index] = args.sv_value
+
+        svChangedSignal:Fire({
+            name = args.sv_name,
+            old = old_value,
+            new = args.sv_value
+        })
     elseif args.action == "setServerSharedVariable" then
         local camera_cframe = framework.character.get_camera_cframe()
         local character_position = framework.character.get_position()
@@ -327,15 +327,6 @@ local function onServerEvent(data: {any | clientEventArguments?})
     end
 end
 
-local function customKeybind_moveForward()
-    print("stopped pressing W")
-end
-
-local function bind_user_setting(func: thread, inputType: InputType, name: string)
-    -- ClientInputGroup:bind_user_setting(func, inputType, name)
-    current_custom_keybinds[name] = true
-end
-
 -- Runtime
 -- Get server variables
 fetchCurrentServerVariables()
@@ -347,8 +338,8 @@ client_module:replace_gun_sounds("HK416", "M4A1", false)
 client_module:replace_gun_sounds("AK_762", "FAL", false)
 
 -- \\ Connect Events
--- \\\\ Constant events
-renderstep_connection = time.renderstep("Monster Client Renderstep", renderstepFunction)
+-- \\\\ Signals
+svChangedSignal:Connect(svChanged)
 
 -- \\\\ Game Events
 framework.on_spawned:Connect(client_module.on_spawned)
@@ -356,9 +347,6 @@ framework.on_died:Connect(client_module.on_died)
 
 -- \\\\ Server Events
 on_server_event:Connect(onServerEvent)
-
--- \\\\ Keybind Events
-bind_user_setting(customKeybind_moveForward, InputType.Ended, "custom_keybind1")
 
 shared["client_module"] = client_module
 shared["gui_module"] = gui_module
