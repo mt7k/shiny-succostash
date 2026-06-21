@@ -395,9 +395,13 @@ end
 local function checkSoundTimer(category: string)
     if ambience_timers[category] then
         local soundTimer = ambience_timers[category]
-
+        if category == "physical_horror_ambience_far_away" then
+            print("----------------\ncategory:", category)
+            print(ambience_timers[category], "\nexpired =", soundTimer.timer:expired(), "\nprimed =", soundTimer.primed)
+        end
         
-        if soundTimer.timer:expired() == true and soundTimer.primed == true then
+        if soundTimer.timer:expired() and soundTimer.primed == true then
+            soundTimer.timer:expire()
             ambience_timers[category].primed = false
 
             local audioDuration = SERVER_SOUNDS:createAmbience(category)
