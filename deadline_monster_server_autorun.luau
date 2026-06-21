@@ -281,7 +281,7 @@ function server_module:setPlayerModelToTeamModel(player: luauInstance)
     player.set_model(model_set)
 end
 
-local function on_bot_spawned(player: string)
+local function on_bot_spawned(player: luauInstance)
     -- player.bot.set_behavior("FireAtNearestPlayerBehavior")
     player.equip_weapon("primary", true)
 end

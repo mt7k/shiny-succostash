@@ -231,7 +231,7 @@ local function AMS_update(delta_time)
 end
 
 local function setupShieldIfNeeded()
-    if shared["sv_monsterShieldsEnabled"] == true and framework.character.is_alive() then
+    if getServerSharedVariable("monsterShieldsEnabled") == true and framework.character.is_alive() then
         if anti_monster_model == nil then
             warn("adding shield")
             client_module:createNewShieldModel()
@@ -248,15 +248,11 @@ end
 
 local function disableShieldIfNeeded()
     if anti_monster_model ~= nil then
-        print(anti_monster_model)
-        warn("removing shield")
         anti_monster_model.destroy()
         anti_monster_model = nil
     end
 
     if amd_connection ~= nil then
-        print(amd_connection)
-        warn("removing shield connection")
         amd_connection:Disconnect()
         amd_connection = nil
     end
@@ -269,8 +265,6 @@ end
 
 --  Method for the framework.on_spawned event
 function client_module.on_spawned()
-    print("spawned")
-
     fetchCurrentServerVariables()
     if getServerSharedVariable("monsterShieldsEnabled") == true then
         setupShieldIfNeeded()
@@ -281,18 +275,15 @@ end
 
 --  Method for the framework.on_died event
 function client_module.on_died()
-    print("died")
     disableShieldIfNeeded()
 end
 
 local function svChanged(args: table)
-    local data = args[1]
-
-    if data.name == "monsterShieldsEnabled" then
-        if data.old ~= data.new then
-            if data.new == true then
+    if args.name == "monsterShieldsEnabled" then
+        if args.old ~= args.new then
+            if args.new == true then
                 setupShieldIfNeeded()
-            elseif data.new == false then
+            elseif args.new == false then
                 disableShieldIfNeeded()
             end
         end
@@ -303,8 +294,8 @@ local function onServerEvent(data: {any | clientEventArguments?})
     local args = data[1] -- why? idk
 
     if args.action == "setServerSharedVariable" then
-        local old_value = shared[index]
         local index = "sv_".. args.sv_name
+        local old_value = shared[index]
         shared[index] = args.sv_value
 
         svChangedSignal:Fire({
