@@ -439,6 +439,7 @@ end
 
 function gameplay_module.startGameLoop()
     if not server_module:getServerSharedVariable("isGameActive") then
+        print('starting game loop')
         server_module:setServerSharedVariable("isGameActive", true)
         gameLoop()
     end
@@ -450,6 +451,7 @@ end
 
 function gameplay_module.startAmbienceLoop()
     if not server_module:getServerSharedVariable("isAmbienceActive") then
+        print("starting ambience loop")
         server_module:setServerSharedVariable("isAmbienceActive", true)
         ambienceLoop()
     end
@@ -600,10 +602,6 @@ SERVER_SOUNDS:preloadAllAudio()
 -- \\ Spawn Entities
 task.spawn(createEntities)
 
--- \\ Runtime Loops
-task.spawn(gameplay_module.startGameLoop)
-task.spawn(gameplay_module.startAmbienceLoop)
-
 -- Events
 -- \\ Run on_player_joined on players that are in the game before this autorun executes
 for i, player in players.get_all() do
@@ -617,6 +615,10 @@ on_player_joined:Connect(onPlayerJoined)
 on_player_left:Connect(onPlayerLeft)
 chat.player_chatted:Connect(playerChatted)
 on_client_event:Connect(onClientEvent)
+
+-- \\ Runtime Loops
+task.spawn(gameplay_module.startGameLoop)
+task.spawn(gameplay_module.startAmbienceLoop)
 
 shared["server_module"] = server_module
 
