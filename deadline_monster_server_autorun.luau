@@ -400,16 +400,25 @@ local function checkSoundTimer(category: string)
         print(ambience_timers[category], "\nexpired =", soundTimer.timer:expired(), "\nprimed =", soundTimer.primed)
         if soundTimer.timer:expired() == true and soundTimer.primed == true then
             ambience_timers[category].primed = false
-            print("\nnew primed =", soundTimer.primed)
+            
+            
 
             local audioDuration = SERVER_SOUNDS:createAmbience(category)
             local new_timeout = math.random(soundTimer.time_range.Min, soundTimer.time_range.Max)
             ambience_timers[category].timer.timeout = new_timeout
 
-            print("timeout:", new_timeout)
-            print("audio duration:", audioDuration)
-            print("total wait time:", new_timeout + audioDuration)
+            if category == "physical_horror_ambience_far_away" then
+                print("\nnew primed =", soundTimer.primed)
+                print("timeout:", new_timeout)
+                print("audio duration:", audioDuration)
+                print("total wait time:", new_timeout + audioDuration)
+            end
+            
             task.wait(new_timeout + audioDuration)
+
+            if category == "physical_horror_ambience_far_away" then
+                print("physical_horror_ambience_far_away timer reset")
+            end
             
             ambience_timers[category].timer:reset()
         end
