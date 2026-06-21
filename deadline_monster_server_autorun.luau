@@ -583,7 +583,7 @@ map.set_preset(MAP_PRESET)
 map.kill_map_lights()
 sharedvars.voxel_bullet_destruction_radius = 1
 -- \\ Custom Server Variables
-server_module:setServerSharedVariable("monsterShieldsEnabled", true)
+server_module:setServerSharedVariable("monsterShieldsEnabled", false)
 server_module:setServerSharedVariable("isGameActive", false)
 
 -- Preload server audios
