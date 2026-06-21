@@ -40,7 +40,7 @@ local IDs = {
         9112795583, -- Hollow Rumble 3 (SFX)
         138347177735590, -- Radio Static Sound
         1840844303, -- Suspended State
-        130812982962354, -- AUDIO ROOM
+        -- 130812982962354, -- AUDIO ROOM
     },
     physical_horror_blip_behind_player = {
         119222436395249, -- look behind you echo
@@ -55,7 +55,6 @@ local IDs = {
         135618935486671, -- [NieR Automata] Damage SFX [on-hit to low-HP]
     },
     physical_horror_ambience_far_away = {
-        88784462446827, -- horror ambience
         1104659813, -- RageGhost_3
         72420282821989, -- Fire_Cry
         133955573194661, -- creepy-ghost-scream
