@@ -256,12 +256,14 @@ end
 
 local function disableShieldIfNeeded()
     if anti_monster_model ~= nil then
+        print(anti_monster_model)
         warn("removing shield")
         anti_monster_model.destroy()
         anti_monster_model = nil
     end
 
     if amd_connection ~= nil then
+        print(amd_connection)
         warn("removing shield connection")
         amd_connection:Disconnect()
         amd_connection = nil
