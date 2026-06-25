@@ -52,7 +52,7 @@ local player_setup_ignore_list = {} --:: {[string]: {["primary" | "secondary"]: 
 local ambience_timers = {
     horror_ambience_blip = {
         timer = Timer.new(0):: Timer,
-        time_range = NumberRange.new(90, 120),
+        time_range = NumberRange.new(30, 120),
     },
     physical_horror_ambience_no_loop = {
         timer = Timer.new(0):: Timer,
