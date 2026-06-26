@@ -3,19 +3,34 @@ local SETUPS = {
     primary = {
         -- Gunlimits
         {
+            Name = "AK-205",
+            WeaponCode = "AK_545",
+            SetupCode = "mc95-0252-q4g4-wqz7-ch7w-wwc8-68en-dgz3"
+        },
+        {
             Name = "HK416",
             WeaponCode = "KF416",
             SetupCode = "h945-0252-fde0-ag3h-0ddz-qmo1-b5cm-cbnm"
         },
         {
-            Name = "MK16",
+            Name = "MK16c",
             WeaponCode = "SCARL",
-            SetupCode = "o9oa-0252-w69f-0nan-m98q-4fc1-d47q-1g2o"
+            SetupCode = "h980-0252-1fa4-wg0o-4h5o-n4d7-360m-a5cn"
         },
         {
             Name = "MK17",
             WeaponCode = "SCARH",
-            SetupCode = "df74-0252-zbm4-80mg-0bf9-fm7n-2g85-q9fd"
+            SetupCode = "bcg2-0252-hamf-z65c-h448-4710-qz76-d41c"
+        },
+        {
+            Name = "VLtor M4A1",
+            WeaponCode = "M4A1",
+            SetupCode = "8eb1-0252-ebe6-me13-g79c-616m-h5e1-c12b"
+        },
+        {
+            Name = "VLtor Integral M4A1",
+            WeaponCode = "M4A1",
+            SetupCode = "o74b-0252-8672-zg6n-c81m-4189-b3mq-fq28"
         },
         -- Nogunlimits
         -- save these
@@ -34,11 +49,6 @@ local SETUPS = {
             Name = "AK-104",
             WeaponCode = "AK_545",
             SetupCode = "eqqz-0252-he3f-32fd-bhed-hqe5-hn89-m533"
-        },
-        {
-            Name = "AK-105",
-            WeaponCode = "AK_545",
-            SetupCode = "4g93-0252-fg76-gz2m-e4g0-09aw-8z32-o5z4"
         },
         {
             Name = "AK-308k",
