@@ -559,7 +559,7 @@ sharedvars.plr_arm_stamina_regen = 9
 sharedvars.plr_arm_stamina_regen_crouch = 3.75
 sharedvars.plr_explosion_blast_pressure = 0
 sharedvars.plr_explosion_damage_multiplier = 0
-sharedvars.plr_weapon_clamp_stats_values = false
+sharedvars.plr_weapon_clamp_stats_values = true
 -- \\ Miscellaneous
 sharedvars.plr_instant_lobby_return_time = 30
 sharedvars.plr_enable_gangsta_control = false

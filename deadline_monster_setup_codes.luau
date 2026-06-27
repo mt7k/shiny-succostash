@@ -3,11 +3,6 @@ local SETUPS = {
     primary = {
         -- Gunlimits
         {
-            Name = "AK-205",
-            WeaponCode = "AK_545",
-            SetupCode = "mc95-0252-q4g4-wqz7-ch7w-wwc8-68en-dgz3"
-        },
-        {
             Name = "HK416",
             WeaponCode = "KF416",
             SetupCode = "h945-0252-fde0-ag3h-0ddz-qmo1-b5cm-cbnm"
@@ -49,6 +44,11 @@ local SETUPS = {
             Name = "AK-104",
             WeaponCode = "AK_545",
             SetupCode = "eqqz-0252-he3f-32fd-bhed-hqe5-hn89-m533"
+        },
+        {
+            Name = "AK-205",
+            WeaponCode = "AK_545",
+            SetupCode = "eqf2-0252-g2cg-5bfa-989h-q7ne-6oqa-ewa8"
         },
         {
             Name = "AK-308k",
