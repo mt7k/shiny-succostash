@@ -1,6 +1,5 @@
 -- TODOS: finish sv replication
 -- # Server Autorun
--- shared.server_module:setServerSharedVariable("monsterShieldsEnabled", false)
 local branch = "main"
 if shared.isLoadingPreMainBranch == true then
     branch = "pre-main"
@@ -34,42 +33,23 @@ type TimerSettings = {
 }
 
 -- Modules
-local PLAYER_SETUP_CODES = require("deadline_monster_setup_codes.luau")
-local SERVER_SOUNDS = require("deadline_monster_sounds.luau")
-local UTILITY = require("deadline_monster_global_utility.luau")
-
--- Constants
-local MAP_CONFIG = {gamemode = "NONE", is_day = false, lights_out = true, map = "test_nuristan", time = 0}
-local MAP_PRESET = "darkworld"
-local MONSTER_COUNT = 0
-local ENEMY_BOT_COUNT = 0
-local HORROR_SOUND_PROPERTIES = SERVER_SOUNDS:getPhysicalSoundPropertyTables()
-local shared_restore_prefix = "RESTORE"
--- local CHAT_COMMAND_PREFIX = ":"
+local CONFIG = require("deadline_monster_server_config.luau")
+local UTILITY_MODULE = require("deadline_monster_global_utility.luau")
+local PLAYER_SETUP_CODES_MODULE = require("deadline_monster_setup_codes.luau")
+local SERVER_SOUNDS_MODULE = require("deadline_monster_sounds.luau")
+local KILLBOT_MODULE = require("deadline_monster_killer_bots.luau")
+local SHAREDVAR_MODULE = require("deadline_monster_sharedvar_setup.luau")
 
 -- Variables
-local player_setup_ignore_list = {} --:: {[string]: {["primary" | "secondary"]: {string}}}
+local horror_sound_properties = SERVER_SOUNDS_MODULE:getPhysicalSoundPropertyTables()
+local player_setup_ignore_list = {}:: {[string]: {[string]: {string}}}
+local ambience_ranges = CONFIG["ambience_timer_ranges"]
 local ambience_timers = {
-    horror_ambience_blip = {
-        timer = Timer.new(0):: Timer,
-        time_range = NumberRange.new(30, 120),
-    },
-    physical_horror_ambience_no_loop = {
-        timer = Timer.new(0):: Timer,
-        time_range = NumberRange.new(30, 60),
-    },
-    physical_horror_blip_behind_player = {
-        timer = Timer.new(0):: Timer,
-        time_range = NumberRange.new(60, 180),
-    },
-    physical_horror_blip_hovering = {
-        timer = Timer.new(0):: Timer,
-        time_range = NumberRange.new(120, 240),
-    },
-    physical_horror_ambience_far_away = {
-        timer = Timer.new(0):: Timer,
-        time_range = NumberRange.new(45, 90),
-    },
+    horror_ambience_blip = UTILITY_MODULE:createTimerSettings(ambience_ranges["horror_ambience_blip"]),
+    physical_horror_ambience_no_loop = UTILITY_MODULE:createTimerSettings(ambience_ranges["physical_horror_ambience_no_loop"]),
+    physical_horror_blip_behind_player = UTILITY_MODULE:createTimerSettings(ambience_ranges["physical_horror_blip_behind_player"]),
+    physical_horror_blip_hovering = UTILITY_MODULE:createTimerSettings(ambience_ranges["physical_horror_blip_hovering"]),
+    physical_horror_ambience_far_away = UTILITY_MODULE:createTimerSettings(ambience_ranges["physical_horror_ambience_far_away"]),
 }:: {[string]: TimerSettings}
 
 -- Functions
@@ -77,7 +57,7 @@ local ambience_timers = {
 local function removeAllMapAmbience()
     -- Non-functional
     for name, preset in config.sound_presets do
-        shared[shared_restore_prefix.. "_".. name] = preset
+        shared[CONFIG["shared_restore_prefix"].. "_".. name] = preset
         for i, v in preset do
             preset[i] = nil
         end
@@ -193,14 +173,14 @@ local function getRandomSetupCode(slot_code: string, player: luauInstance | stri
     local setup_code = nil
     local weapon_code = nil
 
-    local setups_table = PLAYER_SETUP_CODES[slot_code]
+    local setups_table = PLAYER_SETUP_CODES_MODULE[slot_code]
     if setups_table then
         local random_number = math.random(1, #setups_table)
         local setup = setups_table[random_number]
         
         if player then
             local ignore_list = server_module:getPlayerSetupIgnoreList(player)
-            if #ignore_list[slot_code] >= #PLAYER_SETUP_CODES[slot_code] then
+            if #ignore_list[slot_code] >= #PLAYER_SETUP_CODES_MODULE[slot_code] then
                 resetSetupIgnoreList(player, slot_code)
             end
 
@@ -234,7 +214,7 @@ local function getRandomSetupCode(slot_code: string, player: luauInstance | stri
             end
         end
     else
-        error("Weapon table \""..  slot_code.. "\" not found in PLAYER_SETUP_CODES")
+        error("Weapon table \""..  slot_code.. "\" not found in PLAYER_SETUP_CODES_MODULE")
     end
 
     return setup_code, weapon_code
@@ -298,15 +278,15 @@ end
 
 local function createEntities()
     -- Monster Spawning
-    if MONSTER_COUNT > 0 then
-        for i = 1, MONSTER_COUNT, 1 do
+    if CONFIG["monster_count"] > 0 then
+        for i = 1, CONFIG["monster_count"], 1 do
             spawning.monster()
         end
     end
 
     -- Bot spawning
-    if ENEMY_BOT_COUNT > 0 then
-        for i = 1, ENEMY_BOT_COUNT, 1 do
+    if CONFIG["enemy_bot_count"] > 0 then
+        for i = 1, CONFIG["enemy_bot_count"], 1 do
             spawning.bot()
         end
     end
@@ -412,7 +392,7 @@ local function checkSoundTimer(category: string)
             soundTimer.timer:expire()
             ambience_timers[category].primed = false
 
-            local audioDuration = SERVER_SOUNDS:createAmbience(category)
+            local audioDuration = SERVER_SOUNDS_MODULE:createAmbience(category)
             resetSoundTimer(category, audioDuration)
         end
     end
@@ -479,11 +459,11 @@ local function onPlayerDied(name, death_position, killer_data, stats_counted)
     local player = players.get(name)
     if player then
         if killer_data["type"] == "monster" then
-            local death_sound_properties = HORROR_SOUND_PROPERTIES["death_monster"]
-            death_sound_properties["id"] = SERVER_SOUNDS:getRandomSoundID("death_monster")
+            local death_sound_properties = horror_sound_properties["death_monster"]
+            death_sound_properties["id"] = SERVER_SOUNDS_MODULE:getRandomSoundID("death_monster")
             death_sound_properties["position"] = death_position
 
-            SERVER_SOUNDS:insertPhysicalSoundToWorkspace(death_sound_properties)
+            SERVER_SOUNDS_MODULE:insertPhysicalSoundToWorkspace(death_sound_properties)
         end
     else
         warn("player could not be referenced:", name)
@@ -523,93 +503,55 @@ local function onClientEvent(playerName: string, data: {any | serverEventArgumen
     end
 end
 
--- Runtime
--- \\ Removing Sound Presets (doesnt work right now)
-removeAllMapAmbience()
+local function __runtime()
+    -- \\ Removing Sound Presets (doesnt work right now)
+    removeAllMapAmbience()
 
--- Character Property Changes
--- \\ Appearance
-sharedvars.plr_model = "main_backup"
-sharedvars.plr_nv_color = Color3.fromRGB(224, 255, 255)
-sharedvars.plr_enable_markers = false
--- \\ Movement
-sharedvars.plr_fall_damage = false
-sharedvars.plr_jump_multiplier = 0.875
-sharedvars.plr_jump_frequency = 0.5
-sharedvars.plr_speed = 1.05
--- \\ Movement Restrictions
-sharedvars.plr_stamina_regen = 0.25
-sharedvars.plr_stamina_jump_drain = 1.25
-sharedvars.plr_stamina_lean_drain = 0.325
-sharedvars.plr_stamina_run_drain = 0.25
-sharedvars.plr_stamina_shake_multiplier = 0.75
-sharedvars.plr_max_stamina = 240
-sharedvars.plr_vault_stamina_drain = 1.75
--- \\ Utility Modifications
-sharedvars.plr_grenade_throw_strength = 0.95
-sharedvars.plr_shove_headshot_damage = 105
--- \\ Weapon Modifications
-sharedvars.plr_drum_magazines = 3
-sharedvars.plr_magazines = 7
--- \\ Weapon Performance
-sharedvars.plr_max_arm_stamina = 75
-sharedvars.plr_arm_stamina_drain = 6
-sharedvars.plr_arm_stamina_drain_hold_breath = 6
-sharedvars.plr_arm_stamina_regen = 9
-sharedvars.plr_arm_stamina_regen_crouch = 3.75
-sharedvars.plr_explosion_blast_pressure = 0
-sharedvars.plr_explosion_damage_multiplier = 0
-sharedvars.plr_weapon_clamp_stats_values = true
--- \\ Miscellaneous
-sharedvars.plr_instant_lobby_return_time = 30
-sharedvars.plr_enable_gangsta_control = false
+    -- Setting Shared Variables
+    SHAREDVAR_MODULE:setSharedVariables()
 
--- Game Property Changes
--- \\ Anti-cheat
-sharedvars.ac_movement = false
--- \\ Messages & Chat
-chat.set_join_message("The monster is hunting.")
-chat.set_spawning_disabled_reason("Be patient.")
-sharedvars.chat_announce_changes = false
-sharedvars.chat_tips_enabled = false
-sharedvars.chat_max_history = 200
--- \\ Gameplay Restrictions
-sharedvars.editor_mount_anything = true
-sharedvars.gm_team_balancing_threshold = 1000
-sharedvars.sv_spawning_enabled = false
--- \\ Environment
-map.set_map_from_config(MAP_CONFIG)
-map.set_preset(MAP_PRESET)
-map.kill_map_lights()
-sharedvars.voxel_bullet_destruction_radius = 1
--- \\ Custom Server Variables
-server_module:setServerSharedVariable("monsterShieldsEnabled", false)
-server_module:setServerSharedVariable("isGameActive", false)
+    -- Game Property Changes
+    -- \\ Messages & Chat
+    chat.set_join_message(CONFIG["set_join_message"])
+    chat.set_spawning_disabled_reason(CONFIG["spawn_disabled_reason_intermission"])
+    -- \\ Environment
+    map.set_map_from_config(CONFIG["map_config"])
+    map.set_preset(CONFIG["map_preset"])
+    if CONFIG["kill_map_lights"] == true then
+        map.kill_map_lights()
+    end
+    -- \\ Custom Server Variables
+    server_module:setServerSharedVariable("monsterShieldsEnabled", CONFIG["monsterShieldsEnabled"])
+    server_module:setServerSharedVariable("isGameActive", false)
 
--- Preload server audios
-SERVER_SOUNDS:preloadAllAudio()
+    -- Preload server audios
+    SERVER_SOUNDS_MODULE:preloadAllAudio()
 
--- Start the game, spawn the monster(s).
--- \\ Spawn Entities
-task.spawn(createEntities)
+    -- Start the game, spawn the monster(s).
+    -- \\ Spawn Entities
+    task.spawn(createEntities)
 
--- Events
--- \\ Run on_player_joined on players that are in the game before this autorun executes
-for i, player in players.get_all() do
-    local name = player.name
-    onPlayerJoined(name)
+    -- Events
+    -- \\ Run on_player_joined on players that are in the game before this autorun executes
+    for i, player in players.get_all() do
+        local name = player.name
+        onPlayerJoined(name)
+    end
+
+    on_player_spawned:Connect(onPlayerSpawned)
+    on_player_died:Connect(onPlayerDied)
+    on_player_joined:Connect(onPlayerJoined)
+    on_player_left:Connect(onPlayerLeft)
+    chat.player_chatted:Connect(playerChatted)
+    on_client_event:Connect(onClientEvent)
+
+    -- \\ Runtime Loops
+    task.spawn(gameplay_module.startGameLoop)
+    task.spawn(gameplay_module.startAmbienceLoop)
 end
 
-on_player_spawned:Connect(onPlayerSpawned)
-on_player_died:Connect(onPlayerDied)
-on_player_joined:Connect(onPlayerJoined)
-on_player_left:Connect(onPlayerLeft)
-chat.player_chatted:Connect(playerChatted)
-on_client_event:Connect(onClientEvent)
-
--- \\ Runtime Loops
-task.spawn(gameplay_module.startGameLoop)
-task.spawn(gameplay_module.startAmbienceLoop)
+-- Runtime
+__runtime()
 
 shared["server_module"] = server_module
 

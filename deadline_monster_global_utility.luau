@@ -1,10 +1,33 @@
 -- # Utility
 local utility_module = {}
 
+-- Type Aliases
+type Timer = {
+    new: thread,
+    expire: thread,
+    expired: (boolean),
+    timeout: number,
+    next_time: number
+}
+
 -- Constants
 local MAX_INDENT_LENGTH = 7
 
+
 -- Functions
+function utility_module:n()
+    
+end
+
+function utility_module:createTimerSettings(time_range: NumberRange): Timer
+    local timer = {
+        timer = Timer.new(0):: Timer,
+        time_range = time_range,
+    }
+
+    return timer
+end
+
 function utility_module:dictionaryToString(data: {[string]: any}, indent: string)
     indent = indent or ""
     local result = "{\n"

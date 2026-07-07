@@ -1,0 +1,28 @@
+{
+    "robloxLsp.diagnostics.globals": [
+        "set_require_domain",
+        "Timer",
+        "players",
+        "chat",
+        "sharedvars",
+        "map",
+        "on_player_died",
+        "on_player_left",
+        "create_instance",
+        "Signal",
+        "tags",
+        "iris",
+        "Iris",
+        "config",
+        "get_map_root",
+        "framework",
+        "fire_server",
+        "on_server_event",
+        "on_player_spawned",
+        "on_player_joined",
+        "spawning",
+        "weapons",
+        "on_client_event",
+        "sound"
+    ]
+}
