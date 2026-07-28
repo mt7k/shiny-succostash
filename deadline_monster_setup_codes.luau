@@ -28,13 +28,6 @@ local SETUPS = {
             SetupCode = "o74b-0252-8672-zg6n-c81m-4189-b3mq-fq28"
         },
         -- Nogunlimits
-        -- save these
-        {
-            Name = "HK417",
-            WeaponCode = "KF416",
-            SetupCode = "0f0e-0252-goqb-e9qq-mgo9-17g6-gz7z-69d6"
-        },
-        -- saved stuff below
         {
             Name = "AK-102",
             WeaponCode = "AK_545",
@@ -56,6 +49,11 @@ local SETUPS = {
             SetupCode = "b86o-0252-ff2n-mw46-4hg8-4c0w-104z-wze3"
         },
         {
+            Name = "ASM-VAL",
+            WeaponCode = "AK_545",
+            SetupCode = "fe87-0252-9bad-z588-c1e5-a97q-m504-e1eh"
+        },
+        {
             Name = "AUG-762",
             WeaponCode = "AUG_A3",
             SetupCode = "60fh-0252-dc8m-qda4-om5z-z1qh-nh93-8n74"
@@ -64,6 +62,11 @@ local SETUPS = {
             Name = "F2000",
             WeaponCode = "M4A1",
             SetupCode = "g20q-0252-b338-gaz3-eaq2-1meo-g427-327q"
+        },
+        {
+            Name = "HK417 Prototype",
+            WeaponCode = "KF416",
+            SetupCode = "qcc6-0252-5w0z-34dm-bfcg-5emc-a67o-3mm0"
         },
         {
             Name = "HK433",
@@ -76,14 +79,24 @@ local SETUPS = {
             SetupCode = "4o7n-0252-dhen-23g4-2c87-cmm8-h112-8fg5"
         },
         {
+            Name = "M700",
+            WeaponCode = "Remington700",
+            SetupCode = "1naq-0252-0f4a-z2o4-58ee-ne4a-ahd6-obda"
+        },
+        {
+            Name = "M870",
+            WeaponCode = "Remington870",
+            SetupCode = "9bo0-0252-b7fg-b7df-dm1d-wa47-ba0z-gg08"
+        },
+        {
             Name = "MCX LVAW",
-            WeaponCode = "M4A1",
-            SetupCode = "bn1g-0252-d0hc-419f-cc93-cm2b-fg2e-498o"
+            WeaponCode = "KF416",
+            SetupCode = "d935-0252-809b-248a-3ego-aq05-3nmf-14dw"
         },
         {
             Name = "Super Duty M4",
             WeaponCode = "M4A1",
-            SetupCode = "w74n-0252-f4ac-a7mz-n93c-o2n1-3146-7mg1"
+            SetupCode = "ma99-0252-7wzd-w5b6-o67w-6qoe-g0az-779c"
         },
         {
             Name = "Mk18 LSW",
@@ -103,7 +116,7 @@ local SETUPS = {
         {
             Name = "PTR-308",
             WeaponCode = "G3",
-            SetupCode = "9na5-0252-2542-706z-w288-eaw4-a7w7-6f2f"
+            SetupCode = "a554-0252-4778-89zw-h232-gge1-fg00-1fhm"
         },
         {
             Name = "QBB-556",
@@ -123,7 +136,7 @@ local SETUPS = {
         {
             Name = "RPK-15",
             WeaponCode = "AK308",
-            SetupCode = "ez8c-0252-h01c-g654-aqe0-o40w-abw8-5dg8"
+            SetupCode = "h03w-0252-a865-n80o-d947-4bn2-n74o-nzbo"
         },
         {
             Name = "RPK-308",
@@ -149,6 +162,11 @@ local SETUPS = {
             Name = "V308",
             WeaponCode = "Vector",
             SetupCode = "0m5d-0252-8zbe-ac2d-9mmb-eb5o-ww06-fbg6"
+        },
+        {
+            Name = "VLtor SA-58",
+            WeaponCode = "SA58",
+            SetupCode = "8g1e-0252-0bz3-5bhc-g0zq-g5d3-z7fh-ogaf"
         },
     },
     secondary = {
@@ -203,6 +221,11 @@ local SETUPS = {
             Name = "P320 Compact Carbine",
             WeaponCode = "P320",
             SetupCode = "92ca-0252-816h-qoeb-6qf9-hdgd-ofob-qcd7"
+        },
+        {
+            Name = "SA-58 Pistol",
+            WeaponCode = "SA58",
+            SetupCode = "ohgq-0252-ah0z-471e-32b0-12zg-zade-n6wz"
         },
         {
             Name = "UMP45-SD",

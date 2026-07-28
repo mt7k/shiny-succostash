@@ -29,6 +29,7 @@ local CHANGED_VARIABLES = {
     -- \\ Weapon Modifications
     plr_drum_magazines = 3,
     plr_magazines = 7,
+    plr_spare_rounds = 60,
     -- \\ Weapon Performance
     plr_max_arm_stamina = 75,
     plr_arm_stamina_drain = 6,

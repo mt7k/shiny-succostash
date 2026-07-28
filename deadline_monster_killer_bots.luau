@@ -66,9 +66,6 @@ type killbot_runtimes = {
 local UTILITY_MODULE = require("deadline_monster_global_utility.luau")
 local SERVER_SOUNDS = require("deadline_monster_sounds.luau")
 
--- Constants
-local shared_restore_prefix = "RESTORE"
-
 -- Variables
 local current_killbots: {[string]: killbot_properties} = {}
 local killbot_loop_status: killbot_runtimes = {}
@@ -92,7 +89,6 @@ local function getCombatProperties(weapon: string)
 
     return return_table
 end
-
 
 local function setupKillBotTable(bot: luauInstance)
     local bot_name = bot.name
@@ -141,13 +137,34 @@ local function setupKillBotTable(bot: luauInstance)
     return current_killbots[bot_name], killbot_loop_status[bot_name]
 end
 
+local function botCheckForNearbyPlayer(bot: luauInstance)
+    local foundPlayer = nil
+
+    return foundPlayer
+end
+
+local function botIdle(bot: luauInstance)
+
+end
+
 local function killbotLoop(bot: luauInstance)
     local bot_name = bot.name
     local loop_status = killbot_loop_status[bot_name]
     loop_status.currently_looping = true
 
     repeat
-        -- bot logic goes here
+        if bot.is_alive() then
+            local foundPlayer = botCheckForNearbyPlayer(bot)
+            if foundPlayer then
+                -- figure out what to do here
+            else
+                -- perform fail case for kill bot
+                botIdle(bot)
+            end
+        else
+            loop_status.can_loop = false
+        end
+
         task.wait(0.25)
     until loop_status.can_loop == false
 

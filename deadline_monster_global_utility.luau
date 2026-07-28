@@ -13,10 +13,14 @@ type Timer = {
 -- Constants
 local MAX_INDENT_LENGTH = 7
 
-
 -- Functions
-function utility_module:n()
-    
+function utility_module:n(dictionary: {[string]: any})
+    local count = 0
+    for _, _ in dictionary do
+        count += 1
+    end
+
+    return count
 end
 
 function utility_module:createTimerSettings(time_range: NumberRange): Timer

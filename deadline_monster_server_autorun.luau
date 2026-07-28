@@ -482,7 +482,7 @@ local function onPlayerJoined(name)
         warn("player could not be referenced:", name)
     end
 
-    chat.send_ingame_notification(string.format("%s has joined the server.", name))
+    -- chat.send_ingame_notification(string.format("%s has joined the server.", name))
 end
 
 local function onPlayerLeft(name)
