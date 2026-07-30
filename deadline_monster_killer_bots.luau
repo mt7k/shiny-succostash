@@ -178,6 +178,7 @@ local function startKillbotLoop(bot: luauInstance)
 
     if killbot_table then
         if loop_status then
+            print("startKillbotLoop(", bot, "): changing loop status")
             loop_status.can_loop = true
             task.spawn(killbotLoop, bot)
         else
@@ -209,6 +210,7 @@ local function setupKillBotOnSpawn(bot: luauInstance)
     local killbot_table = current_killbots[bot_name] or setupKillBotTable(bot)
 
     -- give bot weapon
+    print("setupKillBotOnSpawn(", bot, "): giving bot weapon")
     if killbot_table.combat_properties then
         if killbot_table.combat_properties.weapon == "knife" then
             local slot_code = "primary"
@@ -228,6 +230,7 @@ local function setupKillBotOnSpawn(bot: luauInstance)
         warn("hey you broke something in ".. bot_name.. "'s killbot_table (killbot_table.combat_properties = nil)")
     end
 
+    print("setupKillBotOnSpawn(", bot, "): resetting movement states")
     -- reset any movement states
     if killbot_table.movement then
         killbot_table.movement.moving = false
@@ -237,17 +240,20 @@ local function setupKillBotOnSpawn(bot: luauInstance)
         killbot_table.movement.next_position = nil
     end
 
+    print("setupKillBotOnSpawn(", bot, "): resetting detection states")
     -- reset any detection states
     if killbot_table.detection then
         killbot_table.detection.detected_player = false
         killbot_table.detection.player_detected = nil
     end
 
+    print("setupKillBotOnSpawn(", bot, "): resetting combat states")
     -- reset any combat states
     if killbot_table.combat then
         killbot_table.combat.attacking = false
     end
 
+    print("setupKillBotOnSpawn(", bot, "): activating killbot loop")
     if killbot_table.runtime_loop then
         killbot_table.runtime_loop.currently_looping = true
     end
@@ -259,6 +265,7 @@ end
 local function on_bot_spawned(bot: luauInstance)
     local bot_name = bot.name
     if current_killbots[bot_name] then
+        print("on_bot_spawned(", bot, ")")
         setupKillBotOnSpawn(bot)
     end
 end
@@ -266,12 +273,14 @@ end
 local function on_bot_died(bot: luauInstance)
     local bot_name = bot.name
     if current_killbots[bot_name] then
+        print("on_bot_died(", bot, ")")
         attemptToEndKillbotLoop(bot)
     end
 end
 
 local function on_bot_joined(bot: luauInstance)
     -- create the killbot
+    print("on_bot_joined(", bot, ")")
     setupKillBotTable(bot)
     bot.set_model("mistake_mistake_set")
 end

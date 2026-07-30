@@ -38,13 +38,13 @@ local CONFIG = {
     },
 
     -- Map
-    map_config = {gamemode = "NONE", is_day = false, lights_out = true, map = "misc_standard_issue", time = 0},
+    map_config = {gamemode = "NONE", is_day = false, lights_out = true, map = "test_crossroad", time = 0},
     map_preset = "darkworld",
     kill_map_lights = true,
 
     -- Entities
     monster_count = 0,
-    enemy_bot_count = 0,
+    enemy_bot_count = 6,
 
     -- Server Variable Defaults
     monsterShieldsEnabled = false
