@@ -144,15 +144,17 @@ local function botCheckForNearbyPlayer(bot: luauInstance)
     local closestDistanceOfFoundPlayer = nil
 
     for i, potentialPlayer in players.get_alive() do
-        local playerPosition: Vector3 = potentialPlayer.get_position()
-        if playerPosition then
-            local botPosition: Vector3 = bot.get_position()
-            local distance: number = (botPosition - playerPosition).Magnitude
-            
-            if distance < sightDistance then
-                if closestDistanceOfFoundPlayer == nil or closestDistanceOfFoundPlayer < distance then
-                    foundPlayer = potentialPlayer
-                    closestDistanceOfFoundPlayer = distance
+        if not potentialPlayer.is_bot() then
+            local playerPosition: Vector3 = potentialPlayer.get_position()
+            if playerPosition then
+                local botPosition: Vector3 = bot.get_position()
+                local distance: number = (botPosition - playerPosition).Magnitude
+                
+                if distance < sightDistance then
+                    if closestDistanceOfFoundPlayer == nil or closestDistanceOfFoundPlayer < distance then
+                        foundPlayer = potentialPlayer
+                        closestDistanceOfFoundPlayer = distance
+                    end
                 end
             end
         end
