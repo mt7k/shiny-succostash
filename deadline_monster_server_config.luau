@@ -47,6 +47,12 @@ local CONFIG = {
     enemy_bot_count = 6,
 
     -- Server Variable Defaults
-    monsterShieldsEnabled = false
+    monsterShieldsEnabled = false,
+
+    -- Weapon restructions
+    restricted_attachment_codes = {
+        "sno_vulkan_pg_7vl_heat_warhead",
+        "sno_vulkan_og_7v_frag_warhead",
+    },
 }
 return CONFIG

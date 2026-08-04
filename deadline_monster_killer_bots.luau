@@ -76,7 +76,7 @@ local function getKillBotTable(bot: luauInstance)
     return current_killbots[bot_name]
 end
 
-local function getCombatProperties(weapon: string)
+local function setCombatProperties(weapon: string)
     local return_table = {
         weapon = weapon
     }
@@ -112,7 +112,7 @@ local function setupKillBotTable(bot: luauInstance)
                 next_linger_delay = UTILITY_MODULE:createTimerSettings(next_linger_range),
                 next_position = nil
             },
-            combat_properties = getCombatProperties("knife"),
+            combat_properties = setCombatProperties("knife"),
             detection_properties = {
                 sight_distance = 70,
                 detection_angle_from_eyes = 105,
@@ -138,13 +138,42 @@ local function setupKillBotTable(bot: luauInstance)
 end
 
 local function botCheckForNearbyPlayer(bot: luauInstance)
+    local killbot_table = getKillBotTable(bot)
+    local sightDistance = killbot_table.detection_properties.sight_distance
     local foundPlayer = nil
+    local closestDistanceOfFoundPlayer = nil
+
+    for i, potentialPlayer in players.get_alive() do
+        local playerPosition: Vector3 = potentialPlayer.get_position()
+        if playerPosition then
+            local botPosition: Vector3 = bot.get_position()
+            local distance: number = (botPosition - playerPosition).Magnitude
+            
+            if distance < sightDistance then
+                if closestDistanceOfFoundPlayer == nil or closestDistanceOfFoundPlayer < distance then
+                    foundPlayer = potentialPlayer
+                    closestDistanceOfFoundPlayer = distance
+                end
+            end
+        end
+    end
 
     return foundPlayer
 end
 
 local function botIdle(bot: luauInstance)
+    local killbot_table = getKillBotTable(bot)
+    bot.bot.set_behavior("BaseBehavior")
+    local linger_timer = killbot_table.movement.next_linger_delay
+    if linger_timer.timer:expired() then
+        local new_linger_timeout = math.random(linger_timer.time_range.Min, linger_timer.time_range.Max)
+        killbot_table.movement.next_linger_delay.timer.timeout = new_linger_timeout
+        killbot_table.movement.next_linger_delay.timer:reset()
 
+        local random_position_offset = Vector3.new(math.random(), 0, math.random())
+        killbot_table.movement.next_position = bot.get_position + random_position_offset
+        bot.bot.set_move_destination(killbot_table.movement.next_position)
+    end
 end
 
 local function killbotLoop(bot: luauInstance)
@@ -157,6 +186,7 @@ local function killbotLoop(bot: luauInstance)
             local foundPlayer = botCheckForNearbyPlayer(bot)
             if foundPlayer then
                 -- figure out what to do here
+                bot.bot.set_behavior("PathfindToNearestPlayerBehavior")
             else
                 -- perform fail case for kill bot
                 botIdle(bot)
@@ -165,7 +195,7 @@ local function killbotLoop(bot: luauInstance)
             loop_status.can_loop = false
         end
 
-        task.wait(0.25)
+        task.wait(1/3)
     until loop_status.can_loop == false
 
     loop_status.currently_looping = false
@@ -252,6 +282,9 @@ local function setupKillBotOnSpawn(bot: luauInstance)
     if killbot_table.combat then
         killbot_table.combat.attacking = false
     end
+
+    -- configure bot properties
+    bot.bot.set_behavior("BaseBehavior")
 
     print("setupKillBotOnSpawn(", bot, "): activating killbot loop")
     if killbot_table.runtime_loop then

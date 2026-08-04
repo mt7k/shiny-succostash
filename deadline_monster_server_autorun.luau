@@ -64,6 +64,37 @@ local function removeAllMapAmbience()
     end
 end
 
+local function getRidOfWeaponWithRestrictedAttachments(player: luauInstance, slot_code: string): (boolean, table | nil)
+    local player_weapon = player.get_weapon_data_from_character(slot_code)
+    local restricted_attachment_found = false
+    local restricted_attachments: table | nil = nil
+    if player_weapon then
+        local weapon_client_data: {[string]: any} = player_weapon.client_data
+        if weapon_client_data then
+            local setup_data: string = weapon_client_data.setup
+            if setup_data then
+                for _, code in CONFIG["restricted_attachment_codes"] do
+                    local contains_attachment = setup_data:find(code)
+                    if contains_attachment then
+                        restricted_attachment_found = true
+                        if restricted_attachments == nil then
+                            restricted_attachments = {}
+                        end
+
+                        table.insert(restricted_attachments, code)
+                    end
+                end
+            end
+        end
+
+        if restricted_attachment_found then
+            player.set_weapon(slot_code, "M4A1", "[]") -- default json to reset restricted weapon
+        end
+    end
+
+    return restricted_attachment_found, restricted_attachments
+end
+
 function server_module:getAllServerSharedVariables()
     local variables = {} :: {[string]: any}
     for i: string, v: any in shared do
@@ -444,6 +475,9 @@ local function onPlayerSpawned(name: string)
 
         server_module:setSlotToSetupFromCode(player, "primary", primary_weapon_code, primary_setup_code)
         server_module:setSlotToSetupFromCode(player, "secondary", secondary_weapon_code, secondary_setup_code)
+
+        getRidOfWeaponWithRestrictedAttachments(player, "primary")
+        getRidOfWeaponWithRestrictedAttachments(player, "secondary")
 
         if player.is_bot() then
             task.spawn(on_bot_spawned, player)

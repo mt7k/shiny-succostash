@@ -164,6 +164,11 @@ local SETUPS = {
             SetupCode = "0m5d-0252-8zbe-ac2d-9mmb-eb5o-ww06-fbg6"
         },
         {
+            Name = "VLtor MK17",
+            WeaponCode = "SCARH",
+            SetupCode = "40c9-0252-37b5-w76b-hg28-34cm-0dcf-1nbe"
+        },
+        {
             Name = "VLtor SA-58",
             WeaponCode = "SA58",
             SetupCode = "8g1e-0252-0bz3-5bhc-g0zq-g5d3-z7fh-ogaf"
@@ -197,6 +202,11 @@ local SETUPS = {
             SetupCode = "g0qa-0252-7dzn-0mgg-f66d-eo51-w6mo-hgw9"
         },
         -- Nogunlimits
+        {
+            Name = "SCAR-SC 10mm",
+            WeaponCode = "SCARL",
+            SetupCode = "0d35-0252-n87a-hmz0-h43b-n949-bqnf-m6ff"
+        },
         {
             Name = "MP/15 Hybrid Carbine",
             WeaponCode = "M4A1",
