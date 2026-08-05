@@ -164,17 +164,26 @@ local function botCheckForNearbyPlayer(bot: luauInstance)
 end
 
 local function botIdle(bot: luauInstance)
-    local killbot_table = getKillBotTable(bot)
     bot.bot.set_behavior("BaseBehavior")
-    local linger_timer = killbot_table.movement.next_linger_delay
-    if linger_timer.timer:expired() then
-        local new_linger_timeout = math.random(linger_timer.time_range.Min, linger_timer.time_range.Max)
-        killbot_table.movement.next_linger_delay.timer.timeout = new_linger_timeout
-        killbot_table.movement.next_linger_delay.timer:reset()
 
-        local random_position_offset = Vector3.new(math.random(), 0, math.random())
-        killbot_table.movement.next_position = bot.get_position + random_position_offset
-        bot.bot.set_move_destination(killbot_table.movement.next_position)
+    local killbot_table = getKillBotTable(bot)
+    if killbot_table then
+        local linger_timer = killbot_table.movement.next_linger_delay
+        if linger_timer then
+            if linger_timer.timer:expired() then
+                local new_linger_timeout = math.random(linger_timer.time_range.Min, linger_timer.time_range.Max)
+                killbot_table.movement.next_linger_delay.timer.timeout = new_linger_timeout
+                killbot_table.movement.next_linger_delay.timer:reset()
+
+                local random_position_offset = Vector3.new(math.random(), 0, math.random())
+                killbot_table.movement.next_position = bot.get_position + random_position_offset
+                bot.bot.set_move_destination(killbot_table.movement.next_position)
+            end
+        else
+            warn("botIdle(", bot, "): killbot_table.movement.next_linger_delay not found")
+        end
+    else
+        warn("botIdle(", bot, "): killbot_table = nil")
     end
 end
 
