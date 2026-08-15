@@ -1,31 +1,31 @@
 -- # Player Setup Codes Module
 local SETUPS = {
     primary = {
-        -- Gunlimits
+        -- Gunlimits, updated
         {
             Name = "HK416",
             WeaponCode = "KF416",
-            SetupCode = "h945-0252-fde0-ag3h-0ddz-qmo1-b5cm-cbnm"
+            SetupCode = "3c1b-0253-a0qm-00aa-gdn0-5dme-zd8w-7dqz"
         },
         {
-            Name = "MK16c",
+            Name = "MK16 SC",
             WeaponCode = "SCARL",
-            SetupCode = "h980-0252-1fa4-wg0o-4h5o-n4d7-360m-a5cn"
+            SetupCode = "f62b-0253-on3h-3d3q-6a04-0mnc-3q3o-09h3"
         },
         {
             Name = "MK17",
             WeaponCode = "SCARH",
-            SetupCode = "bcg2-0252-hamf-z65c-h448-4710-qz76-d41c"
+            SetupCode = "wmwc-0253-1nzn-0aw7-3ge8-o2z0-bbe8-hoge"
         },
         {
             Name = "VLtor M4A1",
             WeaponCode = "M4A1",
-            SetupCode = "8eb1-0252-ebe6-me13-g79c-616m-h5e1-c12b"
+            SetupCode = "2cg0-0253-fo7c-69gb-n06b-og1w-eq9a-967bf"
         },
         {
             Name = "VLtor Integral M4A1",
             WeaponCode = "M4A1",
-            SetupCode = "o74b-0252-8672-zg6n-c81m-4189-b3mq-fq28"
+            SetupCode = "3a8w-0253-qbeo-qz0e-cm05-w03c-bngd-3oe5"
         },
         -- Nogunlimits
         {
