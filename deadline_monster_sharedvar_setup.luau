@@ -2,7 +2,7 @@ local sharedvar_module = {}
 
 local CHANGED_VARIABLES = {
     -- Bot Property Changes
-    bot_target_reach_distance = 3,
+    bot_target_reach_distance = 2,
     sv_bot_auto_spawning_enabled = false,
 
     -- Character Property Changes
@@ -38,7 +38,7 @@ local CHANGED_VARIABLES = {
     plr_arm_stamina_regen_crouch = 3.75,
     plr_explosion_blast_pressure = 0,
     plr_explosion_damage_multiplier = 0,
-    plr_weapon_clamp_stats_values = false,
+    plr_weapon_clamp_stats_values = true,
     -- \\ Miscellaneous
     plr_instant_lobby_return_time = 30,
     plr_enable_gangsta_control = false,
@@ -49,7 +49,7 @@ local CHANGED_VARIABLES = {
     -- \\ Chat
     chat_announce_changes = false,
     chat_tips_enabled = false,
-    chat_max_history = 200,
+    chat_max_history = 300,
     -- \\ Gameplay Restrictions
     editor_mount_anything = true,
     gm_team_balancing_threshold = 1000,

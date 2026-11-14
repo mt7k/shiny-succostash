@@ -43,7 +43,7 @@ local CONFIG = {
     kill_map_lights = true,
 
     -- Entities
-    monster_count = 0,
+    monster_count = 5,
     enemy_bot_count = 6,
 
     -- Server Variable Defaults
